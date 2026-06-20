@@ -1,0 +1,12 @@
+# Keep internal & working documents OUT of the published repository.
+# Note: .gitignore only works with git / GitHub Desktop — it does NOT block
+# manual drag-and-drop uploads on the GitHub website. For manual uploads,
+# only ever drag the app files (index.html and patient-portal.html).
+
+*.md
+!README.md
+*.docx
+*.pdf
+.DS_Store
+Thumbs.db
+desktop.ini
