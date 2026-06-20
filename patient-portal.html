@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IVF Assistant — Your Journey</title>
+<style>
+  /* ─────────────────────────────────────────────────────────────────────────
+     PATIENT PORTAL · Phase 0 + 1 demo · SIMULATED DATA ONLY · no database
+     Design brief: the user is an anxious, hopeful IVF patient. The interface must
+     feel calm, warm and reassuring — NOT a clinical lab dashboard. Soft warm paper,
+     one gentle teal accent, generous space, large legible type, plain kind language.
+
+     This build reflects the five Phase-0 security decisions (see SECURITY_SPEC_phase0.md):
+       1. In-person identity verification  → shown on the Account screen
+       2. Conservative lab-results policy   → Results screen (released subset + note;
+                                              beta-hCG "by phone"; bloods "awaiting review")
+       3. Audit (releases + reads)          → reflected in copy ("released by …")
+       4. OTP + biometric + step-up         → login + "confirm it's you" before results
+       5. Developer-built secured backend   → none of that is here; this is the front end only
+     ───────────────────────────────────────────────────────────────────────── */
+  :root{
+    --paper:#fbf8f4;        /* warm off-white, not clinical white */
+    --card:#ffffff;
+    --ink:#2c3440;          /* soft near-black, never pure #000 */
+    --ink-soft:#6b7480;
+    --ink-faint:#9aa2ac;
+    --line:#ece6dd;         /* warm hairline */
+    --teal:#3d9b94;         /* calm accent — reassuring, not corporate */
+    --teal-soft:#e7f2f0;
+    --teal-deep:#2c7d77;
+    --rose:#e8a598;         /* warmth for human moments */
+    --rose-soft:#fbeee9;
+    --amber:#d99a4e;        /* gentle attention, never alarm-red */
+    --amber-soft:#f8efdf;
+    --radius:20px;
+    --shadow:0 1px 2px rgba(44,52,64,.04), 0 8px 28px rgba(44,52,64,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+  body{min-height:100vh}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+  /* demo badge — always visible so simulated data can NEVER be mistaken for real */
+  .demo-badge{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--amber);color:#fff;
+    text-align:center;font-size:12px;font-weight:600;padding:5px 12px;letter-spacing:.02em}
+  .has-badge{padding-top:30px}
+
+  /* ── Login ── */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:radial-gradient(120% 90% at 50% 0%, #f1ebe2 0%, var(--paper) 55%)}
+  .login-card{width:100%;max-width:380px;background:var(--card);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:34px 28px;text-align:center}
+  .mark{width:64px;height:64px;border-radius:18px;margin:0 auto 18px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff}
+  .mark svg{width:34px;height:34px}
+  .login-card h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .login-card .sub{color:var(--ink-soft);font-size:14px;margin-top:6px;margin-bottom:24px}
+  .field{text-align:left;margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
+  .field input{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;font-size:15px;
+    background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
+  .field input:focus{border-color:var(--teal)}
+  .btn{width:100%;background:var(--teal);color:#fff;font-size:15px;font-weight:600;padding:14px;
+    border-radius:13px;transition:filter .15s, transform .05s}
+  .btn:hover{filter:brightness(1.04)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;color:var(--teal-deep);box-shadow:none}
+  .btn.ghost:hover{filter:none;background:var(--teal-soft)}
+  .login-note{margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+  .otp-row{display:flex;gap:8px;justify-content:center;margin:6px 0 4px}
+  .otp-row input{width:46px;height:54px;text-align:center;font-size:22px;font-weight:600;
+    border:1.5px solid var(--line);border-radius:12px;background:var(--paper)}
+  .otp-row input:focus{border-color:var(--teal);outline:none}
+  .linkbtn{color:var(--teal-deep);font-size:13px;font-weight:600;margin-top:14px;display:inline-block}
+  .face-ring{width:84px;height:84px;border-radius:24px;margin:6px auto 18px;display:grid;place-items:center;
+    background:var(--teal-soft);color:var(--teal-deep);animation:pulse 1.8s ease-in-out infinite}
+  .face-ring svg{width:46px;height:46px}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(61,155,148,.18)}50%{box-shadow:0 0 0 12px rgba(61,155,148,0)}}
+
+  /* ── App shell ── */
+  .app{display:none;max-width:480px;margin:0 auto;padding-bottom:92px;min-height:100vh}
+  .app.active{display:block}
+  .topbar{position:sticky;top:0;z-index:40;background:rgba(251,248,244,.88);backdrop-filter:blur(10px);
+    padding:16px 20px 12px;border-bottom:1px solid var(--line)}
+  .has-badge .topbar{top:30px}
+  .greeting{font-size:13px;color:var(--ink-soft)}
+  .greeting b{color:var(--ink);font-weight:700}
+  .stage-pill{display:inline-flex;align-items:center;gap:6px;margin-top:7px;background:var(--teal-soft);
+    color:var(--teal-deep);font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block}
+
+  .screen{padding:20px;display:none;animation:fade .25s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .screen h2{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+  .screen .lede{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:17px;margin-bottom:13px;box-shadow:var(--shadow)}
+  .card.flat{box-shadow:none}
+  .card.tap{cursor:pointer;transition:transform .1s}
+  .card.tap:active{transform:scale(.99)}
+  .card-row{display:flex;align-items:flex-start;gap:13px}
+  .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
+  .ic.teal{background:var(--teal-soft);color:var(--teal-deep)}
+  .ic.rose{background:var(--rose-soft);color:#c2654f}
+  .ic.amber{background:var(--amber-soft);color:#b07a2e}
+  .ic.grey{background:#eef0f1;color:var(--ink-faint)}
+  .ic svg{width:20px;height:20px}
+  .card h3{font-size:15px;font-weight:650;margin-bottom:2px}
+  .card .meta{font-size:13px;color:var(--ink-soft)}
+  .card .tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:8px;margin-top:8px}
+  .tag.next{background:var(--teal);color:#fff}
+  .tag.done{background:#eef0f1;color:var(--ink-soft)}
+  .tag.signed{background:var(--teal-soft);color:var(--teal-deep)}
+  .tag.released{background:var(--teal-soft);color:var(--teal-deep)}
+  .tag.phone{background:var(--rose-soft);color:#b15740}
+  .tag.await{background:var(--amber-soft);color:#b07a2e}
+
+  .section-label{font-size:12px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;
+    letter-spacing:.06em;margin:22px 4px 10px}
+  .section-label:first-child{margin-top:0}
+
+  /* timeline (journey) */
+  .timeline{position:relative;padding-left:26px}
+  .timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .tl-item{position:relative;padding-bottom:18px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{content:"";position:absolute;left:-22px;top:3px;width:14px;height:14px;border-radius:50%;
+    background:var(--card);border:2.5px solid var(--line)}
+  .tl-item.done::before{background:var(--teal);border-color:var(--teal)}
+  .tl-item.now::before{background:#fff;border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-soft)}
+  .tl-item .t{font-size:14px;font-weight:600}
+  .tl-item .d{font-size:12.5px;color:var(--ink-soft)}
+
+  /* education cards */
+  .edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .edu{border-radius:16px;padding:15px;color:#fff;min-height:108px;display:flex;flex-direction:column;
+    justify-content:flex-end;position:relative;overflow:hidden;cursor:pointer;transition:transform .12s}
+  .edu:active{transform:scale(.98)}
+  .edu h4{font-size:14px;font-weight:650;position:relative}
+  .edu p{font-size:11.5px;opacity:.9;position:relative;margin-top:2px}
+  .edu .em{position:absolute;top:10px;right:12px;font-size:24px;opacity:.9}
+
+  /* med instruction list */
+  .med{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .med:last-child{border-bottom:none}
+  .med .pill{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+    background:var(--rose-soft);color:#c2654f;font-size:18px}
+  .med .body{flex:1;min-width:0}
+  .med .name{font-size:14.5px;font-weight:600}
+  .med .how{font-size:12.5px;color:var(--ink-soft)}
+  .med .chev{color:var(--ink-faint)}
+
+  /* results */
+  .result{display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .result:last-child{border-bottom:none}
+  .result .rname{font-size:14.5px;font-weight:600}
+  .result .rmeta{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+  .result .chev{color:var(--ink-faint);margin-left:auto;align-self:center}
+  .result.tap{cursor:pointer}
+  .lock{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}
+  .lock svg{width:18px;height:18px}
+
+  .notice{background:var(--teal-soft);border-radius:14px;padding:13px 15px;font-size:12.5px;
+    color:var(--teal-deep);display:flex;gap:9px;align-items:flex-start;margin-top:6px;line-height:1.55}
+  .notice svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+  .notice.warm{background:var(--rose-soft);color:#b15740}
+  .notice.amber{background:var(--amber-soft);color:#9c6a25}
+
+  /* the released result value, revealed after step-up */
+  .value-box{background:var(--teal-soft);border-radius:14px;padding:16px;margin-top:6px;text-align:center}
+  .value-box .v{font-size:30px;font-weight:700;color:var(--teal-deep);letter-spacing:-.02em}
+  .value-box .u{font-size:13px;color:var(--teal-deep);opacity:.8}
+  .value-box .range{font-size:12px;color:var(--teal-deep);opacity:.75;margin-top:4px}
+  .clin-note{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+  .clin-note .who{font-size:12px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px}
+  .clin-note .who .av{width:24px;height:24px;border-radius:50%;background:var(--teal-soft);color:var(--teal-deep);
+    display:grid;place-items:center;font-size:11px;font-weight:700}
+  .clin-note .txt{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-top:8px}
+
+  /* "More" menu list */
+  .menu{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .menu-item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--line);
+    width:100%;text-align:left;cursor:pointer;transition:background .12s}
+  .menu-item:last-child{border-bottom:none}
+  .menu-item:active{background:var(--paper)}
+  .menu-item .mi-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
+    background:var(--teal-soft);color:var(--teal-deep)}
+  .menu-item .mi-ic svg{width:18px;height:18px}
+  .menu-item .mi-t{font-size:14.5px;font-weight:600;flex:1}
+  .menu-item .mi-d{font-size:12px;color:var(--ink-soft);font-weight:400;margin-top:1px}
+  .menu-item .chev{color:var(--ink-faint)}
+  .menu-item.danger .mi-ic{background:var(--rose-soft);color:#c2654f}
+  .menu-item.danger .mi-t{color:#c2654f}
+
+  /* toggle */
+  .toggle-row{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .toggle-row:last-child{border-bottom:none}
+  .toggle-row .tr-body{flex:1}
+  .toggle-row .tr-t{font-size:14px;font-weight:600}
+  .toggle-row .tr-d{font-size:12px;color:var(--ink-soft);margin-top:1px}
+  .switch{width:46px;height:28px;border-radius:16px;background:var(--line);position:relative;flex-shrink:0;transition:background .18s}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .18s}
+  .switch.on{background:var(--teal)}
+  .switch.on::after{transform:translateX(18px)}
+
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--teal-deep);font-size:13.5px;font-weight:600;margin-bottom:14px}
+  .back svg{width:16px;height:16px}
+
+  /* detail sheet */
+  .sheet-bg{position:fixed;inset:0;background:rgba(44,52,64,.4);z-index:60;display:none;
+    align-items:flex-end;justify-content:center;animation:fade .2s}
+  .sheet-bg.open{display:flex}
+  .sheet{background:var(--card);width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:8px 22px 30px;
+    max-height:84vh;overflow:auto;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+  @keyframes up{from{transform:translateY(100%)}to{transform:none}}
+  .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:8px auto 16px}
+  .sheet h3{font-size:18px;font-weight:700;margin-bottom:4px}
+  .sheet .body-txt{font-size:14px;color:var(--ink-soft);line-height:1.65;margin-top:10px}
+  .sheet .body-txt b{color:var(--ink)}
+  .sheet ul{margin:10px 0 0 2px;list-style:none}
+  .sheet ul li{font-size:13.5px;color:var(--ink-soft);padding:7px 0 7px 22px;position:relative;line-height:1.5}
+  .sheet ul li::before{content:"";position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--teal)}
+  .sheet .face-ring{margin-top:14px}
+
+  /* bottom nav */
+  .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);display:flex;max-width:480px;margin:0 auto;padding:8px 4px 10px;z-index:40}
+  .nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-faint);
+    font-size:10px;font-weight:600;padding:4px 0;transition:color .15s}
+  .nav button svg{width:22px;height:22px}
+  .nav button.on{color:var(--teal-deep)}
+</style>
+</head>
+<body>
+<div class="demo-badge">● DEMO — simulated data, no real patient information</div>
+
+<!-- ───────────────── LOGIN ───────────────── -->
+<div class="login-wrap has-badge" id="login">
+  <div class="login-card">
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg>
+    </div>
+
+    <!-- step 1: email/phone -->
+    <div id="step-email">
+      <h1>Welcome to your journey</h1>
+      <p class="sub">Sign in to follow your IVF care</p>
+      <div class="field">
+        <label>Email or phone</label>
+        <input id="email" type="text" placeholder="you@example.com" autocomplete="off" />
+      </div>
+      <button class="btn" onclick="sendCode()">Send me a code</button>
+      <p class="login-note">We'll text or email you a one-time code. Your information is private and only visible to you and your care team.</p>
+    </div>
+
+    <!-- step 2: OTP -->
+    <div id="step-otp" style="display:none">
+      <h1>Check your phone</h1>
+      <p class="sub">Enter the 6-digit code we sent you</p>
+      <div class="otp-row">
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,0)" />
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,1)" />
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,2)" />
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,3)" />
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,4)" />
+        <input maxlength="1" inputmode="numeric" oninput="hop(this,5)" />
+      </div>
+      <button class="btn" style="margin-top:18px" onclick="afterOtp()">Verify &amp; continue</button>
+      <a class="linkbtn" onclick="backToEmail()">← Use a different email</a>
+      <p class="login-note">Demo: any 6 digits work. In the real app this verifies a code sent to your phone or email — the patient authentication layer.</p>
+    </div>
+
+    <!-- step 3: offer biometric (Decision 4) -->
+    <div id="step-bio" style="display:none">
+      <div class="face-ring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M20 8V6a2 2 0 0 0-2-2h-2"/><path d="M4 16v2a2 2 0 0 0 2 2h2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
+      </div>
+      <h1>Faster, secure sign-in</h1>
+      <p class="sub">Use Face ID or your fingerprint to open the app next time — quicker for you, and still private to your account.</p>
+      <button class="btn" onclick="enterApp(true)">Enable Face ID</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="enterApp(false)">Not now</button>
+      <p class="login-note">Demo only — no biometrics are actually used. This shows the intended sign-in experience.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────── APP ───────────────── -->
+<div class="app has-badge" id="app">
+  <div class="topbar">
+    <div class="greeting">Good evening, <b>Layla</b></div>
+    <div class="stage-pill"><span class="dot"></span> Stimulation · Day 7 of your cycle</div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="s-home">
+    <h2>Your next step</h2>
+    <p class="lede">Here's what's coming up and how you're doing.</p>
+
+    <div class="card">
+      <div class="card-row">
+        <div class="ic teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <h3>Monitoring scan &amp; bloods</h3>
+          <div class="meta">Tomorrow, Sat 21 Jun · 8:30 AM<br>Dr. Aydın · Ground floor, Room 2</div>
+          <span class="tag next">Your next visit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card tap" onclick="go('meds',navBtn('meds'))">
+      <div class="card-row">
+        <div class="ic rose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+        </div>
+        <div style="flex:1">
+          <h3>Tonight's injection · 9:00 PM</h3>
+          <div class="meta">Gonal-F — tap for the how-to steps</div>
+        </div>
+        <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
+
+    <div class="notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>A new result was released by your clinician. You'll find it under <b>Results</b>.</span>
+    </div>
+
+    <div class="section-label">Where you are</div>
+    <div class="card flat">
+      <div class="timeline">
+        <div class="tl-item done"><div class="t">Treatment started</div><div class="d">Consultation &amp; plan agreed</div></div>
+        <div class="tl-item done"><div class="t">Stimulation begins</div><div class="d">Daily injections started</div></div>
+        <div class="tl-item now"><div class="t">Monitoring</div><div class="d">Scans &amp; bloods — you're here</div></div>
+        <div class="tl-item"><div class="t">Egg collection</div><div class="d">When your follicles are ready</div></div>
+        <div class="tl-item"><div class="t">Embryo transfer</div><div class="d">The next milestone after that</div></div>
+      </div>
+    </div>
+
+    <div class="card tap" onclick="go('learn',navBtn('learn'))" style="margin-top:13px">
+      <div class="card-row">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div style="flex:1"><h3>Understanding your journey</h3><div class="meta">Short, clear guides for each step</div></div>
+        <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPOINTMENTS -->
+  <div class="screen" id="s-appts">
+    <h2>Appointments</h2>
+    <p class="lede">Your upcoming and past visits.</p>
+    <div class="section-label">Coming up</div>
+    <div class="card"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div><h3>Monitoring scan &amp; bloods</h3><div class="meta">Sat 21 Jun · 8:30 AM · Dr. Aydın</div><span class="tag next">Next</span></div>
+    </div></div>
+    <div class="card"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div><h3>Follow-up scan</h3><div class="meta">Mon 23 Jun · 9:00 AM · Dr. Aydın</div></div>
+    </div></div>
+    <div class="section-label">Past</div>
+    <div class="card flat"><div class="card-row">
+      <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div><h3>Baseline scan</h3><div class="meta">Mon 13 Jun · 8:30 AM</div><span class="tag done">Completed</span></div>
+    </div></div>
+    <div class="card flat"><div class="card-row">
+      <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div><h3>Treatment consultation</h3><div class="meta">Tue 7 Jun · 2:00 PM</div><span class="tag done">Completed</span></div>
+    </div></div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Need to change a time? Message your coordinator and they'll help you reschedule.</span></div>
+  </div>
+
+  <!-- RESULTS (release-gated · Decision 2) -->
+  <div class="screen" id="s-results">
+    <h2>Your results</h2>
+    <p class="lede">Results appear here only after a clinician has reviewed and released them.</p>
+
+    <div class="section-label">Released to you</div>
+    <div class="card">
+      <div class="result tap" onclick="viewResult('r1')">
+        <div class="lock" style="background:var(--teal-soft);color:var(--teal-deep)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div>
+          <div class="rname">Oestradiol (E2)</div>
+          <div class="rmeta">Released by Dr. Aydın · Fri 20 Jun</div>
+          <span class="tag released">Released · with a note</span>
+        </div>
+        <span class="chev">›</span>
+      </div>
+    </div>
+
+    <div class="section-label">We'll share these another way</div>
+    <div class="card flat">
+      <div class="result">
+        <div class="lock" style="background:var(--rose-soft);color:#c2654f">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="rname">Pregnancy test (beta-hCG)</div>
+          <div class="rmeta">Your nurse will call you on the day</div>
+          <span class="tag phone">Shared by phone</span>
+        </div>
+      </div>
+    </div>
+    <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg><span>Some results — like your pregnancy test and embryo updates — we share by phone, so we can talk them through with you and answer your questions. We won't leave you to read those alone.</span></div>
+
+    <div class="section-label">Awaiting your clinician</div>
+    <div class="card flat">
+      <div class="result">
+        <div class="lock" style="background:var(--amber-soft);color:#b07a2e">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+        </div>
+        <div>
+          <div class="rname">Today's bloods</div>
+          <div class="rmeta">Your clinician will review and release these here</div>
+          <span class="tag await">Awaiting review</span>
+        </div>
+      </div>
+    </div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>Nothing here is published automatically. A clinician reviews every result and decides what to release — so you always have context, never just a number.</span></div>
+  </div>
+
+  <!-- MEDICINES -->
+  <div class="screen" id="s-meds">
+    <h2>Your medicines</h2>
+    <p class="lede">How to use each one. Always follow the plan your doctor gave you.</p>
+    <div class="card">
+      <div class="med" onclick="openSheet('m1')"><div class="pill">💉</div><div class="body"><div class="name">Gonal-F</div><div class="how">Evening injection · how to prepare &amp; inject</div></div><span class="chev">›</span></div>
+      <div class="med" onclick="openSheet('m2')"><div class="pill">💊</div><div class="body"><div class="name">Cetrotide</div><div class="how">Morning injection · storage &amp; steps</div></div><span class="chev">›</span></div>
+      <div class="med" onclick="openSheet('m3')"><div class="pill">💉</div><div class="body"><div class="name">Trigger injection</div><div class="how">Timing matters — your team will tell you when</div></div><span class="chev">›</span></div>
+    </div>
+    <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>These are general instructions. <b>Your prescription and timing come from your doctor</b> — if anything is unclear, call your clinic before injecting.</span></div>
+  </div>
+
+  <!-- LEARN -->
+  <div class="screen" id="s-learn">
+    <h2>Understanding your journey</h2>
+    <p class="lede">Short, clear guides for each step — written by your clinic.</p>
+    <div class="edu-grid">
+      <div class="edu" style="background:linear-gradient(150deg,#3d9b94,#2c7d77)" onclick="openSheet('e1')"><span class="em">💉</span><h4>Stimulation</h4><p>What the injections do</p></div>
+      <div class="edu" style="background:linear-gradient(150deg,#e8a598,#c2654f)" onclick="openSheet('e2')"><span class="em">🥚</span><h4>Egg collection</h4><p>What to expect on the day</p></div>
+      <div class="edu" style="background:linear-gradient(150deg,#7c9cc4,#5a7aa6)" onclick="openSheet('e3')"><span class="em">🔬</span><h4>In the lab</h4><p>How fertilisation works</p></div>
+      <div class="edu" style="background:linear-gradient(150deg,#d99a4e,#b07a2e)" onclick="openSheet('e4')"><span class="em">🌱</span><h4>Embryo transfer</h4><p>The day of your transfer</p></div>
+      <div class="edu" style="background:linear-gradient(150deg,#9a8fb8,#6f6394)" onclick="openSheet('e5')"><span class="em">🧘</span><h4>Looking after you</h4><p>Wellbeing &amp; the wait</p></div>
+      <div class="edu" style="background:linear-gradient(150deg,#6bb0a8,#3d9b94)" onclick="openSheet('e6')"><span class="em">❓</span><h4>Common questions</h4><p>Things people often ask</p></div>
+    </div>
+    <div class="notice" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>These guides are general information reviewed by your clinic — they don't replace the advice your own team gives you.</span></div>
+  </div>
+
+  <!-- MORE -->
+  <div class="screen" id="s-more">
+    <h2>More</h2>
+    <p class="lede">Your forms, your details, and how this app works.</p>
+    <div class="menu">
+      <button class="menu-item" onclick="go('consents',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <span class="mi-t">Your consents<span class="mi-d">The forms you've signed</span></span>
+        <span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('account',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <span class="mi-t">Your details &amp; privacy<span class="mi-d">Account, sign-in and how your data is protected</span></span>
+        <span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('about',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        <span class="mi-t">About this app<span class="mi-d">What it can and can't do yet</span></span>
+        <span class="chev">›</span>
+      </button>
+      <button class="menu-item danger" onclick="signOut()">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="mi-t">Sign out</span>
+        <span class="chev">›</span>
+      </button>
+    </div>
+    <div class="notice" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>This app is not for emergencies. If you feel unwell, call your clinic — or your local emergency number.</span></div>
+  </div>
+
+  <!-- CONSENTS (reached from More) -->
+  <div class="screen" id="s-consents">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
+    <h2>Your consents</h2>
+    <p class="lede">The forms you've signed, kept here for your reference.</p>
+    <div class="card tap" onclick="openSheet('c1')"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><h3>IVF Treatment Consent</h3><div class="meta">Signed 7 Jun 2026</div><span class="tag signed">✓ Signed</span></div>
+    </div></div>
+    <div class="card tap" onclick="openSheet('c2')"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><h3>Anaesthesia Consent</h3><div class="meta">Signed 7 Jun 2026</div><span class="tag signed">✓ Signed</span></div>
+    </div></div>
+    <div class="card tap" onclick="openSheet('c3')"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><h3>Embryo Freezing Consent</h3><div class="meta">Signed 7 Jun 2026</div><span class="tag signed">✓ Signed</span></div>
+    </div></div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>These are read-only copies. If you ever want to change or withdraw a consent, please talk to your care team.</span></div>
+  </div>
+
+  <!-- ACCOUNT / PRIVACY (reached from More) -->
+  <div class="screen" id="s-account">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
+    <h2>Your details &amp; privacy</h2>
+    <p class="lede">Who you're signed in as, and how your information is kept safe.</p>
+
+    <div class="card">
+      <div class="card-row">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
+        <div><h3>Layla Hassan</h3><div class="meta">layla@example.com<br>Patient since June 2026</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">How your information is protected</div>
+    <div class="card flat">
+      <div class="card-row" style="margin-bottom:12px">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div><h3>Only you can see your information</h3><div class="meta">Your records are locked to your account. No other patient can ever see them — and you can only see your own.</div></div>
+      </div>
+      <div class="card-row" style="margin-bottom:12px">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div><h3>Verified in person at the clinic</h3><div class="meta">Your account was connected to your record after your identity was checked face-to-face — so it's really you.</div></div>
+      </div>
+      <div class="card-row">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><h3>You decided to use this portal</h3><div class="meta">You gave consent to receive your information digitally. You can withdraw it anytime by telling your team.</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Sign-in &amp; notifications</div>
+    <div class="card flat">
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t">Face ID / fingerprint unlock</div><div class="tr-d">Open the app quickly and privately</div></div>
+        <div class="switch on" id="sw-bio" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t">Extra check for results</div><div class="tr-d">Confirm it's you before sensitive results show</div></div>
+        <div class="switch on" id="sw-stepup" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t">Appointment reminders</div><div class="tr-d">A gentle nudge before each visit</div></div>
+        <div class="switch on" id="sw-notif" onclick="toggleSwitch(this)"></div>
+      </div>
+    </div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>For your safety, every time a result is shared with you it's recorded — so your clinic always knows exactly what you've been shown.</span></div>
+
+    <button class="btn" style="background:transparent;color:#c2654f;margin-top:8px" onclick="signOut()">Sign out</button>
+  </div>
+
+  <!-- ABOUT (reached from More) -->
+  <div class="screen" id="s-about">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
+    <h2>About this app</h2>
+    <p class="lede">An honest note on what this is — and isn't — today.</p>
+
+    <div class="notice amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><b>This is a demo.</b> Everything you see is made-up sample information — not real patient data. It's here so we can show how the app will feel before it's connected to anything real.</span></div>
+
+    <div class="section-label">What it does</div>
+    <div class="card flat">
+      <div class="body-txt" style="color:var(--ink-soft);font-size:14px">This portal is a calm place to follow your IVF journey: your <b>appointments</b>, the <b>results your clinician chooses to release</b>, your signed <b>consents</b>, plain-language <b>guides</b>, and <b>how-to instructions</b> for your medicines.</div>
+    </div>
+
+    <div class="section-label">What it doesn't do</div>
+    <div class="card flat">
+      <ul style="list-style:none">
+        <li style="font-size:13.5px;color:var(--ink-soft);padding:7px 0 7px 22px;position:relative;line-height:1.5"><span style="position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--rose);display:block"></span>It never decides anything medical — it only shows what your clinic shares.</li>
+        <li style="font-size:13.5px;color:var(--ink-soft);padding:7px 0 7px 22px;position:relative;line-height:1.5"><span style="position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--rose);display:block"></span>It never works out your dose or timing — that comes from your doctor.</li>
+        <li style="font-size:13.5px;color:var(--ink-soft);padding:7px 0 7px 22px;position:relative;line-height:1.5"><span style="position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--rose);display:block"></span>It's not for emergencies, and not a replacement for talking to your team.</li>
+      </ul>
+    </div>
+    <p class="login-note" style="text-align:center;margin-top:18px">IVF Assistant — Patient Portal · Demo build</p>
+  </div>
+
+  <!-- bottom nav -->
+  <div class="nav">
+    <button class="on" data-s="home" onclick="go('home',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+    <button data-s="appts" onclick="go('appts',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Visits</button>
+    <button data-s="results" onclick="go('results',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>Results</button>
+    <button data-s="meds" onclick="go('meds',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>Medicines</button>
+    <button data-s="more" onclick="go('more',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
+  </div>
+</div>
+
+<!-- detail sheet -->
+<div class="sheet-bg" id="sheet-bg" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div id="sheet-content"></div>
+  </div>
+</div>
+
+<script>
+/* ── SIMULATED DATA ONLY. No network, no database, no real patient information.
+   This is the patient-facing front end. The real app connects (through a
+   secured, patient-scoped layer with row-level security) only AFTER the
+   compliance review. Here, everything is local and fake.
+
+   The flows below MODEL the five Phase-0 security decisions so the experience
+   can be reviewed — they do not implement real security. ── */
+
+// ── login flow (demo: any input works) ──
+function sendCode(){
+  var e = document.getElementById('email').value.trim();
+  if(!e){ document.getElementById('email').focus(); return; }
+  show('step-email', false); show('step-otp', true);
+  var first = document.querySelector('#step-otp .otp-row input'); if(first) first.focus();
+}
+function backToEmail(){ show('step-otp', false); show('step-email', true); }
+function hop(el, i){
+  el.value = el.value.replace(/[^0-9]/g,'');
+  var inputs = document.querySelectorAll('#step-otp .otp-row input');
+  if(el.value && i < 5) inputs[i+1].focus();
+}
+function afterOtp(){ show('step-otp', false); show('step-bio', true); }   // Decision 4: offer biometric
+function enterApp(){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').classList.add('active');
+  window.scrollTo(0,0);
+}
+function show(id, on){ document.getElementById(id).style.display = on ? 'block' : 'none'; }
+
+// ── navigation ──
+function navBtn(s){ return document.querySelector('.nav button[data-s="'+s+'"]'); }
+function go(s, btn){
+  document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active')});
+  var el = document.getElementById('s-'+s); if(el) el.classList.add('active');
+  // highlight matching nav button (sub-screens like consents/account map to "more")
+  var navTarget = btn || navBtn(s) || (['consents','account','about'].indexOf(s)>=0 ? navBtn('more') : null);
+  document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('on')});
+  if(navTarget) navTarget.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── account toggles ──
+function toggleSwitch(el){ el.classList.toggle('on'); }
+
+// ── sign out ──
+function signOut(){
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login').style.display='flex';
+  show('step-otp', false); show('step-bio', false); show('step-email', true);
+  document.querySelectorAll('#step-otp .otp-row input').forEach(function(i){i.value=''});
+  document.getElementById('email').value='';
+  go('home', navBtn('home'));
+  window.scrollTo(0,0);
+}
+
+// ── results: step-up confirm before a released result (Decision 4) ──
+function viewResult(id){
+  var stepUpOn = document.getElementById('sw-stepup').classList.contains('on');
+  if(stepUpOn){
+    var html = '<h3>Confirm it’s you</h3>'
+      + '<div class="body-txt">For your privacy, please confirm before we show this result.</div>'
+      + '<div class="face-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M20 8V6a2 2 0 0 0-2-2h-2"/><path d="M4 16v2a2 2 0 0 0 2 2h2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg></div>'
+      + '<button class="btn" onclick="openResult(\''+id+'\')">Use Face ID</button>'
+      + '<p class="login-note" style="text-align:center">Demo only — no biometrics are actually used.</p>';
+    document.getElementById('sheet-content').innerHTML = html;
+    document.getElementById('sheet-bg').classList.add('open');
+  } else {
+    openResult(id);
+  }
+}
+function openResult(id){
+  var r = RESULTS[id]; if(!r) return;
+  var html = '<h3>'+r.t+'</h3>'
+    + '<div class="body-txt"><b>'+r.h+'</b></div>'
+    + '<div class="value-box"><div class="v">'+r.v+'</div><div class="u">'+r.u+'</div><div class="range">'+r.range+'</div></div>'
+    + '<div class="clin-note"><div class="who"><span class="av">'+r.initials+'</span> '+r.by+'</div><div class="txt">'+r.note+'</div></div>'
+    + '<div class="body-txt" style="font-size:12.5px">Released '+r.when+'. If you have any questions about this, your care team is happy to talk it through.</div>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+
+var RESULTS = {
+  r1:{t:"Oestradiol (E2)", h:"A hormone we track during stimulation.", v:"1,240", u:"pg/mL",
+      range:"Typical mid-stimulation range — looking good", initials:"AA", by:"Dr. Aydın",
+      note:"Your levels are responding nicely to the medication — this is just what we want to see at this stage. Keep going with tonight’s injection, and I’ll see you at your scan.",
+      when:"Fri 20 Jun, 4:10 PM"}
+};
+
+// ── detail sheets — plain, kind, clinician-voice copy (simulated) ──
+var SHEETS = {
+  c1:{t:"IVF Treatment Consent",h:"You signed this on 7 June 2026.",b:"This is your agreement to go ahead with IVF treatment as discussed with your doctor. It covers the steps of your cycle, the medicines involved, and what to expect.",li:["A copy is kept securely by your clinic","You can ask your care team any question about it","To change or withdraw it, please speak to your team"]},
+  c2:{t:"Anaesthesia Consent",h:"You signed this on 7 June 2026.",b:"Your agreement for the sedation used during egg collection, so the procedure is comfortable for you.",li:["The anaesthetist will see you on the day","You'll have a chance to ask questions before"]},
+  c3:{t:"Embryo Freezing Consent",h:"You signed this on 7 June 2026.",b:"Your agreement about freezing and storing any suitable embryos not used in a fresh transfer.",li:["Covers how long embryos are stored","Your wishes can be reviewed with your team at any time"]},
+  e1:{t:"Stimulation — what the injections do",h:"Where you are now.",b:"During stimulation, the daily injections gently encourage your ovaries to grow several follicles at once, instead of the single one in a natural cycle. More follicles means a better chance of collecting several eggs.",li:["Scans and blood tests track how your follicles grow","Doses may be adjusted along the way — that's normal","Some bloating or tenderness is common; tell your team if you're worried"]},
+  e2:{t:"Egg collection — the day",h:"What to expect.",b:"Egg collection is a short procedure, usually around 20–30 minutes, done under light sedation so you're comfortable. A fine needle gently collects the fluid from each follicle, and the eggs are found in the lab.",li:["You'll be asked not to eat beforehand — your team will tell you when to stop","Plan to rest for the remainder of the day","Someone should accompany you home after sedation"]},
+  e3:{t:"In the lab — how fertilisation works",h:"What happens to your eggs.",b:"After collection, our embryologists care for your eggs. They're combined with sperm (sometimes by injecting a single sperm into each egg, called ICSI), then watched closely as they hopefully fertilise and begin to grow into embryos.",li:["The lab updates your team on how your embryos develop","Embryos are grown in carefully controlled incubators","Your team will talk you through the results"]},
+  e4:{t:"Embryo transfer — the day",h:"The next milestone.",b:"Transfer is a gentle, quick procedure — usually painless and without sedation. A soft, thin catheter places the chosen embryo into your womb. Many people describe it as similar to a smear test.",li:["You can usually return to normal activity soon after","Your team will explain when to take a pregnancy test","Try to be kind to yourself during the wait"]},
+  e5:{t:"Looking after you",h:"Your wellbeing matters.",b:"IVF asks a lot of you — emotionally as well as physically. Rest when you need to, lean on people you trust, and remember the waiting times are often the hardest part. That's completely normal.",li:["Gentle movement and good sleep help","It's okay to ask for emotional support","Your care team is here for the worries too, not just the medical questions"]},
+  e6:{t:"Common questions",h:"Things people often ask.",b:"Every journey is different, and no question is too small. Here are a few we hear often — but please always ask your own team about your specific situation.",li:["“Is this cramping normal?” — often yes, but tell us if it's severe","“Can I exercise?” — gentle activity is usually fine","“What if I miss an injection?” — call us straight away, don't double up"]},
+  m1:{t:"Gonal-F",h:"Evening injection.",b:"Gonal-F is one of the medicines that helps your follicles grow. It comes as a pre-filled pen.",li:["Take it out of the fridge a few minutes before — it's more comfortable at room temperature","Dial the dose your doctor prescribed — check it carefully","Inject into the fatty part of your tummy, a little away from your belly button","Rotate the spot each evening to avoid soreness"]},
+  m2:{t:"Cetrotide",h:"Morning injection.",b:"Cetrotide helps stop your body releasing the eggs too early, so they can be collected at the right time.",li:["Keep it in the fridge until you use it","Follow the mixing steps in the box if it needs preparing","Inject into your tummy as shown by your nurse"]},
+  m3:{t:"Trigger injection",h:"Timing is important.",b:"The trigger is the final injection that matures your eggs before collection. The exact time matters a great deal — your team will tell you precisely when to take it.",li:["Take it at the EXACT time your team gives you","Set an alarm so you don't miss it","If anything goes wrong with the timing, call the clinic immediately"]}
+};
+function openSheet(id){
+  var s = SHEETS[id]; if(!s) return;
+  var html = '<h3>'+s.t+'</h3><div class="body-txt"><b>'+s.h+'</b></div><div class="body-txt">'+s.b+'</div>';
+  if(s.li){ html += '<ul>'; s.li.forEach(function(x){ html += '<li>'+x+'</li>'; }); html += '</ul>'; }
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function closeSheet(){ document.getElementById('sheet-bg').classList.remove('open'); }
+</script>
+</body>
+</html>
