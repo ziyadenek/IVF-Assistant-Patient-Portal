@@ -11,28 +11,20 @@
      feel calm, warm and reassuring — NOT a clinical lab dashboard. Soft warm paper,
      one gentle teal accent, generous space, large legible type, plain kind language.
 
-     This build reflects the five Phase-0 security decisions (see SECURITY_SPEC_phase0.md):
-       1. In-person identity verification  → shown on the Account screen
-       2. Conservative lab-results policy   → Results screen (released subset + note;
-                                              beta-hCG "by phone"; bloods "awaiting review")
-       3. Audit (releases + reads)          → reflected in copy ("released by …")
-       4. OTP + biometric + step-up         → login + "confirm it's you" before results
-       5. Developer-built secured backend   → none of that is here; this is the front end only
+     Reflects the five Phase-0 security decisions (see SECURITY_SPEC_phase0.md):
+       1. In-person identity verification  → Account screen
+       2. Conservative lab-results policy   → Results screen
+       3. Audit (releases + reads)          → copy ("released by …")
+       4. OTP + biometric + step-up         → login + step-up before results
+       5. Developer-built secured backend   → not here; front end only
      ───────────────────────────────────────────────────────────────────────── */
   :root{
-    --paper:#fbf8f4;        /* warm off-white, not clinical white */
-    --card:#ffffff;
-    --ink:#2c3440;          /* soft near-black, never pure #000 */
-    --ink-soft:#6b7480;
-    --ink-faint:#9aa2ac;
-    --line:#ece6dd;         /* warm hairline */
-    --teal:#3d9b94;         /* calm accent — reassuring, not corporate */
-    --teal-soft:#e7f2f0;
-    --teal-deep:#2c7d77;
-    --rose:#e8a598;         /* warmth for human moments */
-    --rose-soft:#fbeee9;
-    --amber:#d99a4e;        /* gentle attention, never alarm-red */
-    --amber-soft:#f8efdf;
+    --paper:#fbf8f4; --card:#ffffff;
+    --ink:#2c3440; --ink-soft:#6b7480; --ink-faint:#9aa2ac;
+    --line:#ece6dd;
+    --teal:#3d9b94; --teal-soft:#e7f2f0; --teal-deep:#2c7d77;
+    --rose:#e8a598; --rose-soft:#fbeee9;
+    --amber:#d99a4e; --amber-soft:#f8efdf;
     --radius:20px;
     --shadow:0 1px 2px rgba(44,52,64,.04), 0 8px 28px rgba(44,52,64,.06);
     --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
@@ -43,7 +35,6 @@
   button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
-  /* demo badge — always visible so simulated data can NEVER be mistaken for real */
   .demo-badge{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--amber);color:#fff;
     text-align:center;font-size:12px;font-weight:600;padding:5px 12px;letter-spacing:.02em}
   .has-badge{padding-top:30px}
@@ -60,9 +51,9 @@
   .login-card .sub{color:var(--ink-soft);font-size:14px;margin-top:6px;margin-bottom:24px}
   .field{text-align:left;margin-bottom:14px}
   .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
-  .field input{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;font-size:15px;
-    background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
-  .field input:focus{border-color:var(--teal)}
+  .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;font-size:15px;
+    background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s;font-family:inherit}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal)}
   .btn{width:100%;background:var(--teal);color:#fff;font-size:15px;font-weight:600;padding:14px;
     border-radius:13px;transition:filter .15s, transform .05s}
   .btn:hover{filter:brightness(1.04)}
@@ -74,7 +65,7 @@
   .otp-row input{width:46px;height:54px;text-align:center;font-size:22px;font-weight:600;
     border:1.5px solid var(--line);border-radius:12px;background:var(--paper)}
   .otp-row input:focus{border-color:var(--teal);outline:none}
-  .linkbtn{color:var(--teal-deep);font-size:13px;font-weight:600;margin-top:14px;display:inline-block}
+  .linkbtn{color:var(--teal-deep);font-size:13px;font-weight:600;margin-top:14px;display:inline-block;cursor:pointer}
   .face-ring{width:84px;height:84px;border-radius:24px;margin:6px auto 18px;display:grid;place-items:center;
     background:var(--teal-soft);color:var(--teal-deep);animation:pulse 1.8s ease-in-out infinite}
   .face-ring svg{width:46px;height:46px}
@@ -86,11 +77,14 @@
   .topbar{position:sticky;top:0;z-index:40;background:rgba(251,248,244,.88);backdrop-filter:blur(10px);
     padding:16px 20px 12px;border-bottom:1px solid var(--line)}
   .has-badge .topbar{top:30px}
+  .topbar-row{display:flex;align-items:center;justify-content:space-between}
   .greeting{font-size:13px;color:var(--ink-soft)}
   .greeting b{color:var(--ink);font-weight:700}
   .stage-pill{display:inline-flex;align-items:center;gap:6px;margin-top:7px;background:var(--teal-soft);
     color:var(--teal-deep);font-size:12px;font-weight:600;padding:5px 11px;border-radius:20px}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);display:inline-block}
+  .lang-btn{border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-size:12.5px;font-weight:700;
+    color:var(--teal-deep);background:var(--card)}
 
   .screen{padding:20px;display:none;animation:fade .25s ease}
   .screen.active{display:block}
@@ -124,7 +118,7 @@
     letter-spacing:.06em;margin:22px 4px 10px}
   .section-label:first-child{margin-top:0}
 
-  /* timeline (journey) */
+  /* timeline */
   .timeline{position:relative;padding-left:26px}
   .timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
   .tl-item{position:relative;padding-bottom:18px}
@@ -135,6 +129,7 @@
   .tl-item.now::before{background:#fff;border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-soft)}
   .tl-item .t{font-size:14px;font-weight:600}
   .tl-item .d{font-size:12.5px;color:var(--ink-soft)}
+  .tl-item .when{font-size:12px;color:var(--teal-deep);font-weight:600;margin-top:1px}
 
   /* education cards */
   .edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
@@ -145,25 +140,39 @@
   .edu p{font-size:11.5px;opacity:.9;position:relative;margin-top:2px}
   .edu .em{position:absolute;top:10px;right:12px;font-size:24px;opacity:.9}
 
-  /* med instruction list */
-  .med{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
-  .med:last-child{border-bottom:none}
+  /* med + result rows */
+  .med,.result{display:flex;align-items:center;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+  .med:last-child,.result:last-child{border-bottom:none}
   .med .pill{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;
     background:var(--rose-soft);color:#c2654f;font-size:18px}
   .med .body{flex:1;min-width:0}
   .med .name{font-size:14.5px;font-weight:600}
   .med .how{font-size:12.5px;color:var(--ink-soft)}
-  .med .chev{color:var(--ink-faint)}
-
-  /* results */
-  .result{display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid var(--line)}
-  .result:last-child{border-bottom:none}
+  .med .chev,.result .chev{color:var(--ink-faint)}
+  .result .chev{margin-left:auto;align-self:center}
   .result .rname{font-size:14.5px;font-weight:600}
   .result .rmeta{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
-  .result .chev{color:var(--ink-faint);margin-left:auto;align-self:center}
-  .result.tap{cursor:pointer}
+  .result.static{cursor:default}
   .lock{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}
   .lock svg{width:18px;height:18px}
+
+  /* avatars / care team */
+  .avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
+    font-size:16px;font-weight:700;color:#fff}
+  .team-reach{font-size:12.5px;color:var(--teal-deep);font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:5px}
+  .team-reach svg{width:14px;height:14px}
+
+  /* messages */
+  .msg{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .msg:last-child{border-bottom:none}
+  .msg .m-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;background:var(--teal-soft);color:var(--teal-deep)}
+  .msg .m-ic svg{width:17px;height:17px}
+  .msg .m-body{flex:1;min-width:0}
+  .msg .m-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .msg .m-from{font-size:13.5px;font-weight:650}
+  .msg .m-time{font-size:11.5px;color:var(--ink-faint);white-space:nowrap}
+  .msg .m-text{font-size:13px;color:var(--ink-soft);margin-top:2px;line-height:1.5}
+  .msg.unread .m-from::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-left:7px;vertical-align:middle}
 
   .notice{background:var(--teal-soft);border-radius:14px;padding:13px 15px;font-size:12.5px;
     color:var(--teal-deep);display:flex;gap:9px;align-items:flex-start;margin-top:6px;line-height:1.55}
@@ -171,7 +180,6 @@
   .notice.warm{background:var(--rose-soft);color:#b15740}
   .notice.amber{background:var(--amber-soft);color:#9c6a25}
 
-  /* the released result value, revealed after step-up */
   .value-box{background:var(--teal-soft);border-radius:14px;padding:16px;margin-top:6px;text-align:center}
   .value-box .v{font-size:30px;font-weight:700;color:var(--teal-deep);letter-spacing:-.02em}
   .value-box .u{font-size:13px;color:var(--teal-deep);opacity:.8}
@@ -182,7 +190,7 @@
     display:grid;place-items:center;font-size:11px;font-weight:700}
   .clin-note .txt{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-top:8px}
 
-  /* "More" menu list */
+  /* menu list */
   .menu{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .menu-item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--line);
     width:100%;text-align:left;cursor:pointer;transition:background .12s}
@@ -203,13 +211,13 @@
   .toggle-row .tr-body{flex:1}
   .toggle-row .tr-t{font-size:14px;font-weight:600}
   .toggle-row .tr-d{font-size:12px;color:var(--ink-soft);margin-top:1px}
-  .switch{width:46px;height:28px;border-radius:16px;background:var(--line);position:relative;flex-shrink:0;transition:background .18s}
+  .switch{width:46px;height:28px;border-radius:16px;background:var(--line);position:relative;flex-shrink:0;transition:background .18s;cursor:pointer}
   .switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;
     box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .18s}
   .switch.on{background:var(--teal)}
   .switch.on::after{transform:translateX(18px)}
 
-  .back{display:inline-flex;align-items:center;gap:6px;color:var(--teal-deep);font-size:13.5px;font-weight:600;margin-bottom:14px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--teal-deep);font-size:13.5px;font-weight:600;margin-bottom:14px;cursor:pointer}
   .back svg{width:16px;height:16px}
 
   /* detail sheet */
@@ -226,15 +234,23 @@
   .sheet ul{margin:10px 0 0 2px;list-style:none}
   .sheet ul li{font-size:13.5px;color:var(--ink-soft);padding:7px 0 7px 22px;position:relative;line-height:1.5}
   .sheet ul li::before{content:"";position:absolute;left:2px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--teal)}
+  .sheet .field{margin-top:14px}
   .sheet .face-ring{margin-top:14px}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:104px;transform:translateX(-50%) translateY(20px);z-index:120;
+    background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:12px 18px;border-radius:14px;
+    box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;max-width:88%;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* bottom nav */
   .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
     border-top:1px solid var(--line);display:flex;max-width:480px;margin:0 auto;padding:8px 4px 10px;z-index:40}
   .nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-faint);
-    font-size:10px;font-weight:600;padding:4px 0;transition:color .15s}
+    font-size:10px;font-weight:600;padding:4px 0;transition:color .15s;position:relative}
   .nav button svg{width:22px;height:22px}
   .nav button.on{color:var(--teal-deep)}
+  .nav .ndot{position:absolute;top:2px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:var(--rose);border:1.5px solid #fff}
 </style>
 </head>
 <body>
@@ -247,7 +263,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg>
     </div>
 
-    <!-- step 1: email/phone -->
     <div id="step-email">
       <h1>Welcome to your journey</h1>
       <p class="sub">Sign in to follow your IVF care</p>
@@ -259,7 +274,6 @@
       <p class="login-note">We'll text or email you a one-time code. Your information is private and only visible to you and your care team.</p>
     </div>
 
-    <!-- step 2: OTP -->
     <div id="step-otp" style="display:none">
       <h1>Check your phone</h1>
       <p class="sub">Enter the 6-digit code we sent you</p>
@@ -276,15 +290,14 @@
       <p class="login-note">Demo: any 6 digits work. In the real app this verifies a code sent to your phone or email — the patient authentication layer.</p>
     </div>
 
-    <!-- step 3: offer biometric (Decision 4) -->
     <div id="step-bio" style="display:none">
       <div class="face-ring">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M20 8V6a2 2 0 0 0-2-2h-2"/><path d="M4 16v2a2 2 0 0 0 2 2h2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M9 10h.01M15 10h.01"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
       </div>
       <h1>Faster, secure sign-in</h1>
       <p class="sub">Use Face ID or your fingerprint to open the app next time — quicker for you, and still private to your account.</p>
-      <button class="btn" onclick="enterApp(true)">Enable Face ID</button>
-      <button class="btn ghost" style="margin-top:8px" onclick="enterApp(false)">Not now</button>
+      <button class="btn" onclick="enterApp()">Enable Face ID</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="enterApp()">Not now</button>
       <p class="login-note">Demo only — no biometrics are actually used. This shows the intended sign-in experience.</p>
     </div>
   </div>
@@ -293,8 +306,12 @@
 <!-- ───────────────── APP ───────────────── -->
 <div class="app has-badge" id="app">
   <div class="topbar">
-    <div class="greeting">Good evening, <b>Layla</b></div>
-    <div class="stage-pill"><span class="dot"></span> Stimulation · Day 7 of your cycle</div>
+    <div class="topbar-row">
+      <div>
+        <div class="greeting">Good evening, <b>Layla</b></div>
+        <div class="stage-pill"><span class="dot"></span> Stimulation · Day 7 of your cycle</div>
+      </div>
+    </div>
   </div>
 
   <!-- HOME -->
@@ -315,7 +332,7 @@
       </div>
     </div>
 
-    <div class="card tap" onclick="go('meds',navBtn('meds'))">
+    <div class="card tap" onclick="go('meds',null)">
       <div class="card-row">
         <div class="ic rose">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
@@ -342,9 +359,18 @@
         <div class="tl-item"><div class="t">Egg collection</div><div class="d">When your follicles are ready</div></div>
         <div class="tl-item"><div class="t">Embryo transfer</div><div class="d">The next milestone after that</div></div>
       </div>
+      <button class="btn ghost" style="margin-top:8px" onclick="go('plan',null)">See your full plan</button>
     </div>
 
-    <div class="card tap" onclick="go('learn',navBtn('learn'))" style="margin-top:13px">
+    <div class="card tap" onclick="go('team',null)" style="margin-top:13px">
+      <div class="card-row">
+        <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div style="flex:1"><h3>Your care team</h3><div class="meta">Meet the people looking after you</div></div>
+        <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
+
+    <div class="card tap" onclick="go('learn',null)">
       <div class="card-row">
         <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <div style="flex:1"><h3>Understanding your journey</h3><div class="meta">Short, clear guides for each step</div></div>
@@ -360,8 +386,10 @@
     <div class="section-label">Coming up</div>
     <div class="card"><div class="card-row">
       <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <div><h3>Monitoring scan &amp; bloods</h3><div class="meta">Sat 21 Jun · 8:30 AM · Dr. Aydın</div><span class="tag next">Next</span></div>
-    </div></div>
+      <div style="flex:1"><h3>Monitoring scan &amp; bloods</h3><div class="meta">Sat 21 Jun · 8:30 AM · Dr. Aydın</div><span class="tag next">Next</span></div>
+    </div>
+      <button class="btn ghost" style="margin-top:10px" onclick="toast('Added to your calendar (demo)')">Add to calendar</button>
+    </div>
     <div class="card"><div class="card-row">
       <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
       <div><h3>Follow-up scan</h3><div class="meta">Mon 23 Jun · 9:00 AM · Dr. Aydın</div></div>
@@ -375,17 +403,17 @@
       <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div><h3>Treatment consultation</h3><div class="meta">Tue 7 Jun · 2:00 PM</div><span class="tag done">Completed</span></div>
     </div></div>
-    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Need to change a time? Message your coordinator and they'll help you reschedule.</span></div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Need to change a time? Send your coordinator a callback request under Messages and they'll help you reschedule.</span></div>
   </div>
 
-  <!-- RESULTS (release-gated · Decision 2) -->
+  <!-- RESULTS -->
   <div class="screen" id="s-results">
     <h2>Your results</h2>
     <p class="lede">Results appear here only after a clinician has reviewed and released them.</p>
 
     <div class="section-label">Released to you</div>
     <div class="card">
-      <div class="result tap" onclick="viewResult('r1')">
+      <div class="result" onclick="viewResult('r1')">
         <div class="lock" style="background:var(--teal-soft);color:var(--teal-deep)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
@@ -400,7 +428,7 @@
 
     <div class="section-label">We'll share these another way</div>
     <div class="card flat">
-      <div class="result">
+      <div class="result static">
         <div class="lock" style="background:var(--rose-soft);color:#c2654f">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </div>
@@ -415,7 +443,7 @@
 
     <div class="section-label">Awaiting your clinician</div>
     <div class="card flat">
-      <div class="result">
+      <div class="result static">
         <div class="lock" style="background:var(--amber-soft);color:#b07a2e">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
         </div>
@@ -429,8 +457,152 @@
     <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>Nothing here is published automatically. A clinician reviews every result and decides what to release — so you always have context, never just a number.</span></div>
   </div>
 
+  <!-- MESSAGES -->
+  <div class="screen" id="s-messages">
+    <h2>Messages</h2>
+    <p class="lede">Updates from your clinic, and a way to ask them to call you back.</p>
+
+    <button class="btn" onclick="openCallback()">Request a callback</button>
+
+    <div class="notice warm" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Messages aren't monitored around the clock and <b>aren't for emergencies</b>. If you feel unwell or need urgent help, call the clinic on <b>+971 4 000 0000</b> — or your local emergency number.</span></div>
+
+    <div class="section-label">From your clinic</div>
+    <div class="card">
+      <div class="msg unread">
+        <div class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="m-body">
+          <div class="m-top"><span class="m-from">Dr. Aydın</span><span class="m-time">Today, 4:10 PM</span></div>
+          <div class="m-text">Your Oestradiol result is ready and I've added a note — you can read it under Results. Looking good. See you at tomorrow's scan.</div>
+        </div>
+      </div>
+      <div class="msg unread">
+        <div class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="m-body">
+          <div class="m-top"><span class="m-from">Clinic reminder</span><span class="m-time">Today, 9:00 AM</span></div>
+          <div class="m-text">A gentle reminder: your monitoring scan is tomorrow (Sat 21 Jun) at 8:30 AM. Please arrive 10 minutes early.</div>
+        </div>
+      </div>
+      <div class="msg">
+        <div class="m-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="m-body">
+          <div class="m-top"><span class="m-from">Mariam · Coordinator</span><span class="m-time">Wed, 11:20 AM</span></div>
+          <div class="m-text">Welcome to your portal, Layla. You'll get your appointment reminders and released results here. I'm your point of contact for any day-to-day questions.</div>
+        </div>
+      </div>
+    </div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>This is one-way for now: your clinic can message you, and you can request a callback. Open two-way chat may come later, once the team can answer it safely.</span></div>
+  </div>
+
+  <!-- MORE -->
+  <div class="screen" id="s-more">
+    <h2>More</h2>
+    <p class="lede">Your plan, your team, your forms and how this app works.</p>
+    <div class="menu">
+      <button class="menu-item" onclick="go('plan',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <span class="mi-t">Treatment plan<span class="mi-d">Your day-by-day outline &amp; reminders</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('team',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+        <span class="mi-t">Your care team<span class="mi-d">Who's looking after you</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('meds',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg></span>
+        <span class="mi-t">Your medicines<span class="mi-d">How to use each one</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('learn',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span class="mi-t">Learn<span class="mi-d">Guides for each step of your journey</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('consents',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <span class="mi-t">Your consents<span class="mi-d">The forms you've signed</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('account',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <span class="mi-t">Your details &amp; privacy<span class="mi-d">Account, sign-in and data protection</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('about',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+        <span class="mi-t">About this app<span class="mi-d">What it can and can't do yet</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item danger" onclick="signOut()">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="mi-t">Sign out</span><span class="chev">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TREATMENT PLAN -->
+  <div class="screen" id="s-plan">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
+    <h2>Your treatment plan</h2>
+    <p class="lede">A general outline of your cycle, so you know what's ahead.</p>
+
+    <div class="notice amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>This is a general guide. <b>Your exact dates, doses and timing come from your doctor</b> and can change as your cycle progresses — always follow what your team tells you.</span></div>
+
+    <div class="section-label">Your cycle, step by step</div>
+    <div class="card flat">
+      <div class="timeline">
+        <div class="tl-item done"><div class="t">Baseline scan &amp; bloods</div><div class="when">Mon 13 Jun</div><div class="d">Starting point for your cycle</div></div>
+        <div class="tl-item done"><div class="t">Stimulation injections begin</div><div class="when">From 14 Jun · each evening</div><div class="d">Gonal-F to help your follicles grow</div></div>
+        <div class="tl-item now"><div class="t">Monitoring scans &amp; bloods</div><div class="when">You're here · next Sat 21 Jun</div><div class="d">Tracking how your follicles respond</div></div>
+        <div class="tl-item"><div class="t">Trigger injection</div><div class="when">Date &amp; time from your team</div><div class="d">The final injection before collection — timing matters</div></div>
+        <div class="tl-item"><div class="t">Egg collection</div><div class="when">~36 hours after the trigger</div><div class="d">Short procedure under light sedation</div></div>
+        <div class="tl-item"><div class="t">Embryo transfer</div><div class="when">A few days after collection</div><div class="d">When your team confirms the timing</div></div>
+        <div class="tl-item"><div class="t">Pregnancy test</div><div class="when">~9–14 days after transfer</div><div class="d">Shared with you by phone</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Reminders</div>
+    <div class="card flat">
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t">Appointment reminders</div><div class="tr-d">A nudge the day before each visit</div></div>
+        <div class="switch on" onclick="toggleSwitch(this,'Appointment reminders')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t">Injection reminders</div><div class="tr-d">A nightly nudge at your usual time</div></div>
+        <div class="switch on" onclick="toggleSwitch(this,'Injection reminders')"></div>
+      </div>
+    </div>
+    <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Reminders are a convenience to help you remember — <b>they are not medical advice</b>. Always take your medicines exactly as your doctor prescribed, and call the clinic if you're unsure.</span></div>
+    <button class="btn ghost" onclick="toast('Plan added to your calendar (demo)')">Add my plan to calendar</button>
+  </div>
+
+  <!-- CARE TEAM -->
+  <div class="screen" id="s-team">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
+    <h2>Your care team</h2>
+    <p class="lede">The people looking after you on your journey.</p>
+
+    <div class="card"><div class="card-row">
+      <div class="avatar" style="background:linear-gradient(150deg,#3d9b94,#2c7d77)">AA</div>
+      <div><h3>Dr. Aydın</h3><div class="meta">Fertility specialist · your doctor<br>Leads your treatment and makes the medical decisions.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="avatar" style="background:linear-gradient(150deg,#e8a598,#c2654f)">M</div>
+      <div><h3>Mariam</h3><div class="meta">Nurse &amp; care coordinator<br>Your first point of contact for day-to-day questions.</div>
+        <span class="team-reach" onclick="go('messages',null)" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Request a callback</span>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="avatar" style="background:linear-gradient(150deg,#7c9cc4,#5a7aa6)">🔬</div>
+      <div><h3>The embryology team</h3><div class="meta">Your lab team<br>They care for your eggs and embryos, and update your doctor on how they're developing.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="avatar" style="background:linear-gradient(150deg,#9a8fb8,#6f6394)">R</div>
+      <div><h3>Reception</h3><div class="meta">Appointments &amp; admin<br>For scheduling, paperwork and general enquiries.</div></div>
+    </div></div>
+
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Clinic hours: Sun–Thu, 8:00 AM – 6:00 PM · <b>+971 4 000 0000</b>. Outside these hours, for anything urgent please call your local emergency number.</span></div>
+  </div>
+
   <!-- MEDICINES -->
   <div class="screen" id="s-meds">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
     <h2>Your medicines</h2>
     <p class="lede">How to use each one. Always follow the plan your doctor gave you.</p>
     <div class="card">
@@ -443,6 +615,7 @@
 
   <!-- LEARN -->
   <div class="screen" id="s-learn">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
     <h2>Understanding your journey</h2>
     <p class="lede">Short, clear guides for each step — written by your clinic.</p>
     <div class="edu-grid">
@@ -456,36 +629,7 @@
     <div class="notice" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span>These guides are general information reviewed by your clinic — they don't replace the advice your own team gives you.</span></div>
   </div>
 
-  <!-- MORE -->
-  <div class="screen" id="s-more">
-    <h2>More</h2>
-    <p class="lede">Your forms, your details, and how this app works.</p>
-    <div class="menu">
-      <button class="menu-item" onclick="go('consents',null)">
-        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-        <span class="mi-t">Your consents<span class="mi-d">The forms you've signed</span></span>
-        <span class="chev">›</span>
-      </button>
-      <button class="menu-item" onclick="go('account',null)">
-        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
-        <span class="mi-t">Your details &amp; privacy<span class="mi-d">Account, sign-in and how your data is protected</span></span>
-        <span class="chev">›</span>
-      </button>
-      <button class="menu-item" onclick="go('about',null)">
-        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
-        <span class="mi-t">About this app<span class="mi-d">What it can and can't do yet</span></span>
-        <span class="chev">›</span>
-      </button>
-      <button class="menu-item danger" onclick="signOut()">
-        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
-        <span class="mi-t">Sign out</span>
-        <span class="chev">›</span>
-      </button>
-    </div>
-    <div class="notice" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>This app is not for emergencies. If you feel unwell, call your clinic — or your local emergency number.</span></div>
-  </div>
-
-  <!-- CONSENTS (reached from More) -->
+  <!-- CONSENTS -->
   <div class="screen" id="s-consents">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
     <h2>Your consents</h2>
@@ -505,7 +649,7 @@
     <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span>These are read-only copies. If you ever want to change or withdraw a consent, please talk to your care team.</span></div>
   </div>
 
-  <!-- ACCOUNT / PRIVACY (reached from More) -->
+  <!-- ACCOUNT -->
   <div class="screen" id="s-account">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
     <h2>Your details &amp; privacy</h2>
@@ -554,7 +698,7 @@
     <button class="btn" style="background:transparent;color:#c2654f;margin-top:8px" onclick="signOut()">Sign out</button>
   </div>
 
-  <!-- ABOUT (reached from More) -->
+  <!-- ABOUT -->
   <div class="screen" id="s-about">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> More</button>
     <h2>About this app</h2>
@@ -564,7 +708,7 @@
 
     <div class="section-label">What it does</div>
     <div class="card flat">
-      <div class="body-txt" style="color:var(--ink-soft);font-size:14px">This portal is a calm place to follow your IVF journey: your <b>appointments</b>, the <b>results your clinician chooses to release</b>, your signed <b>consents</b>, plain-language <b>guides</b>, and <b>how-to instructions</b> for your medicines.</div>
+      <div class="body-txt" style="color:var(--ink-soft);font-size:14px">A calm place to follow your IVF journey: your <b>appointments</b>, the <b>results your clinician releases</b>, your <b>treatment plan</b>, your <b>care team</b>, <b>messages</b> from the clinic, signed <b>consents</b>, plain-language <b>guides</b>, and <b>how-to instructions</b> for your medicines.</div>
     </div>
 
     <div class="section-label">What it doesn't do</div>
@@ -583,7 +727,7 @@
     <button class="on" data-s="home" onclick="go('home',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
     <button data-s="appts" onclick="go('appts',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Visits</button>
     <button data-s="results" onclick="go('results',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 4-5"/></svg>Results</button>
-    <button data-s="meds" onclick="go('meds',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>Medicines</button>
+    <button data-s="messages" onclick="go('messages',this)"><span class="ndot"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages</button>
     <button data-s="more" onclick="go('more',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>More</button>
   </div>
 </div>
@@ -596,16 +740,15 @@
   </div>
 </div>
 
+<!-- toast -->
+<div class="toast" id="toast"></div>
+
 <script>
 /* ── SIMULATED DATA ONLY. No network, no database, no real patient information.
-   This is the patient-facing front end. The real app connects (through a
-   secured, patient-scoped layer with row-level security) only AFTER the
-   compliance review. Here, everything is local and fake.
+   Flows MODEL the design + the five Phase-0 security decisions for review;
+   they do not implement real security. ── */
 
-   The flows below MODEL the five Phase-0 security decisions so the experience
-   can be reviewed — they do not implement real security. ── */
-
-// ── login flow (demo: any input works) ──
+// ── login ──
 function sendCode(){
   var e = document.getElementById('email').value.trim();
   if(!e){ document.getElementById('email').focus(); return; }
@@ -618,7 +761,7 @@ function hop(el, i){
   var inputs = document.querySelectorAll('#step-otp .otp-row input');
   if(el.value && i < 5) inputs[i+1].focus();
 }
-function afterOtp(){ show('step-otp', false); show('step-bio', true); }   // Decision 4: offer biometric
+function afterOtp(){ show('step-otp', false); show('step-bio', true); }
 function enterApp(){
   document.getElementById('login').style.display='none';
   document.getElementById('app').classList.add('active');
@@ -631,15 +774,25 @@ function navBtn(s){ return document.querySelector('.nav button[data-s="'+s+'"]')
 function go(s, btn){
   document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active')});
   var el = document.getElementById('s-'+s); if(el) el.classList.add('active');
-  // highlight matching nav button (sub-screens like consents/account map to "more")
-  var navTarget = btn || navBtn(s) || (['consents','account','about'].indexOf(s)>=0 ? navBtn('more') : null);
+  var sub = ['plan','team','meds','learn','consents','account','about'];
+  var navTarget = btn || navBtn(s) || (sub.indexOf(s)>=0 ? navBtn('more') : null);
   document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('on')});
   if(navTarget) navTarget.classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── account toggles ──
-function toggleSwitch(el){ el.classList.toggle('on'); }
+// ── toggles + toast ──
+function toggleSwitch(el, label){
+  el.classList.toggle('on');
+  if(label){ toast(label + (el.classList.contains('on') ? ' on' : ' off')); }
+}
+var toastTimer;
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
 
 // ── sign out ──
 function signOut(){
@@ -652,7 +805,27 @@ function signOut(){
   window.scrollTo(0,0);
 }
 
-// ── results: step-up confirm before a released result (Decision 4) ──
+// ── request a callback (Messages) ──
+function openCallback(){
+  var html = '<h3>Request a callback</h3>'
+    + '<div class="body-txt">Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.</div>'
+    + '<div class="field"><label>What’s it about?</label><select id="cb-reason">'
+    + '<option>A question about my medication</option><option>A question about my appointment</option>'
+    + '<option>How I’m feeling / a symptom</option><option>Something else</option></select></div>'
+    + '<div class="field"><label>Best time to reach you</label><select id="cb-time">'
+    + '<option>Morning (8am–12pm)</option><option>Afternoon (12–4pm)</option><option>Late afternoon (4–6pm)</option></select></div>'
+    + '<div class="field"><label>Anything you’d like us to know (optional)</label><textarea rows="3" placeholder="A short note…"></textarea></div>'
+    + '<button class="btn" onclick="sendCallback()">Send request</button>'
+    + '<p class="login-note" style="text-align:center">Not for emergencies. For urgent help, call the clinic or your local emergency number.</p>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function sendCallback(){
+  closeSheet();
+  toast('Callback request sent — we’ll be in touch (demo)');
+}
+
+// ── results: step-up before a released result (Decision 4) ──
 function viewResult(id){
   var stepUpOn = document.getElementById('sw-stepup').classList.contains('on');
   if(stepUpOn){
@@ -663,9 +836,7 @@ function viewResult(id){
       + '<p class="login-note" style="text-align:center">Demo only — no biometrics are actually used.</p>';
     document.getElementById('sheet-content').innerHTML = html;
     document.getElementById('sheet-bg').classList.add('open');
-  } else {
-    openResult(id);
-  }
+  } else { openResult(id); }
 }
 function openResult(id){
   var r = RESULTS[id]; if(!r) return;
@@ -677,7 +848,6 @@ function openResult(id){
   document.getElementById('sheet-content').innerHTML = html;
   document.getElementById('sheet-bg').classList.add('open');
 }
-
 var RESULTS = {
   r1:{t:"Oestradiol (E2)", h:"A hormone we track during stimulation.", v:"1,240", u:"pg/mL",
       range:"Typical mid-stimulation range — looking good", initials:"AA", by:"Dr. Aydın",
@@ -685,7 +855,7 @@ var RESULTS = {
       when:"Fri 20 Jun, 4:10 PM"}
 };
 
-// ── detail sheets — plain, kind, clinician-voice copy (simulated) ──
+// ── detail sheets (education / medicines / consents) ──
 var SHEETS = {
   c1:{t:"IVF Treatment Consent",h:"You signed this on 7 June 2026.",b:"This is your agreement to go ahead with IVF treatment as discussed with your doctor. It covers the steps of your cycle, the medicines involved, and what to expect.",li:["A copy is kept securely by your clinic","You can ask your care team any question about it","To change or withdraw it, please speak to your team"]},
   c2:{t:"Anaesthesia Consent",h:"You signed this on 7 June 2026.",b:"Your agreement for the sedation used during egg collection, so the procedure is comfortable for you.",li:["The anaesthetist will see you on the day","You'll have a chance to ask questions before"]},
