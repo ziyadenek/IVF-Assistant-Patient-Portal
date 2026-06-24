@@ -7,15 +7,18 @@ on a phone or a narrow window (it's designed mobile-first).
 ---
 
 ## What this IS
-A working, clickable patient-facing app shell — **separate from the staff app** — with:
-- **Patient login** (email/phone → one-time code) — the OTP auth *flow* (demo: any input works)
-- **Home / "Your journey"** — next step, tonight's injection reminder, a visual journey timeline
-- **Appointments** — upcoming + past visits (view-only)
-- **Your consents** — the forms they signed, read-only, with a "talk to your team to change" note
-- **Learn** — six warm education guides (stimulation, egg collection, the lab, transfer,
-  wellbeing, FAQs), each opening a plain-language detail sheet
-- **Medicines** — how-to instructions per drug, with the safety line that dosing/timing comes
-  from the doctor, not the app
+A working, clickable patient-facing app shell — **separate from the staff app** — with a
+five-tab bottom nav (**Home · Visits · Results · Messages · More**):
+- **Patient login** (email/phone → one-time code, then optional Face ID) — the OTP auth *flow* (demo: any input works)
+- **Home** — "your next step", tonight's injection reminder, a results-released nudge, and a
+  visual "where you are" journey timeline
+- **Visits** — upcoming + past appointments (view-only), with "add to calendar"
+- **Results** — clinician-released results only, each behind a "confirm it's you" gate and shown
+  with the clinician's note (sensitive results like beta-hCG are shared by phone, never silently posted)
+- **Messages** — one-way updates from the clinic + a "request a callback" action (not two-way chat; not for emergencies)
+- **More** — Treatment plan, your care team, **Medicines** (how-to per drug; dosing/timing comes
+  from the doctor, not the app), **Learn** (six warm education guides), **Your consents** (read-only,
+  with a "talk to your team to change" note), details & privacy, about, sign out
 
 Design: deliberately calm and warm (soft paper, one gentle teal accent, generous space, kind
 plain-language copy) — built for an anxious, hopeful patient, NOT as a clinical dashboard.

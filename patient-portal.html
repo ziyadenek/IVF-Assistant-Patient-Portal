@@ -93,6 +93,23 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
     padding:17px;margin-bottom:13px;box-shadow:var(--shadow)}
   .card.flat{box-shadow:none}
+  /* ── Today's tasks (one-tap self-administration log) ── */
+  .task-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-soft);margin-bottom:4px;gap:10px}
+  .task-count{font-weight:700;color:var(--teal-deep);background:var(--teal-soft);border-radius:20px;padding:2px 10px;font-size:11.5px;flex-shrink:0}
+  .task{display:flex;align-items:center;gap:12px;padding:11px 2px;border-top:1px solid var(--line);cursor:pointer}
+  .task-box{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;color:#fff;flex-shrink:0;transition:.18s}
+  .task-box svg{width:14px;height:14px;opacity:0;transition:.18s}
+  .task-body{flex:1;min-width:0}
+  .task-t{display:block;font-size:14px;font-weight:600;color:var(--ink)}
+  .task-m{display:block;font-size:12px;color:var(--ink-soft);margin-top:1px}
+  .task-do{font-size:12px;font-weight:700;color:var(--teal-deep);background:var(--teal-soft);border-radius:20px;padding:5px 12px;white-space:nowrap;flex-shrink:0}
+  .task-done-lbl{display:none;font-size:12px;font-weight:700;color:var(--teal-deep);white-space:nowrap;flex-shrink:0}
+  .task.done .task-box{background:var(--teal);border-color:var(--teal)}
+  .task.done .task-box svg{opacity:1}
+  .task.done .task-t{color:var(--ink-soft)}
+  .task.done .task-do{display:none}
+  .task.done .task-done-lbl{display:inline-block}
+  .task-foot{font-size:11.5px;color:var(--ink-faint);margin-top:8px;line-height:1.5;padding-top:10px;border-top:1px solid var(--line)}
   .card.tap{cursor:pointer;transition:transform .1s}
   .card.tap:active{transform:scale(.99)}
   .card-row{display:flex;align-items:flex-start;gap:13px}
@@ -357,6 +374,28 @@
         </div>
         <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
       </div>
+    </div>
+
+    <!-- TODAY'S TASKS · one-tap self-administration log (demo) -->
+    <div class="section-label" data-i18n="today_label">Today</div>
+    <div class="card flat">
+      <div class="task-head"><span data-i18n="today_sub">A gentle checklist — tap when each is done.</span><span class="task-count">0/3</span></div>
+      <div class="task" onclick="markTask(this)">
+        <span class="task-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>
+        <span class="task-body"><span class="task-t" data-i18n="task1_t">Injection — Gonal-F</span><span class="task-m" data-i18n="task1_m">Tonight · 9:00 PM · self-administered</span></span>
+        <span class="task-do" data-i18n="task_markdone">Mark done</span><span class="task-done-lbl" data-i18n="task_isdone">✓ Done</span>
+      </div>
+      <div class="task" onclick="markTask(this)">
+        <span class="task-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>
+        <span class="task-body"><span class="task-t" data-i18n="task2_t">Folic acid · 5 mg</span><span class="task-m" data-i18n="task2_m">With breakfast</span></span>
+        <span class="task-do" data-i18n="task_markdone">Mark done</span><span class="task-done-lbl" data-i18n="task_isdone">✓ Done</span>
+      </div>
+      <div class="task" onclick="markTask(this)">
+        <span class="task-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>
+        <span class="task-body"><span class="task-t" data-i18n="task3_t">Confirm tomorrow's scan</span><span class="task-m" data-i18n="task3_m">Sat 21 Jun · 8:30 AM</span></span>
+        <span class="task-do" data-i18n="task_confirm">Confirm</span><span class="task-done-lbl" data-i18n="task_confirmed">✓ Confirmed</span>
+      </div>
+      <div class="task-foot" data-i18n="today_foot">When you mark a home injection done, your care team can see it — so they know your cycle is on track. Demo only — nothing is actually sent.</div>
     </div>
 
     <div class="notice">
@@ -800,6 +839,14 @@ function toggleSwitch(el, key){
 }
 var toastTimer;
 function toast(key){ toastText((TOAST[LANG] && TOAST[LANG][key]) || key); }
+function markTask(el){
+  el.classList.toggle('done');
+  var card = el.closest('.card');
+  var total = card.querySelectorAll('.task').length;
+  var done = card.querySelectorAll('.task.done').length;
+  var c = card.querySelector('.task-count'); if(c) c.textContent = done + '/' + total;
+  if(el.classList.contains('done')) toast('task_logged');
+}
 function toastText(msg){
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -869,6 +916,8 @@ function openSheet(id){
   document.getElementById('sheet-bg').classList.add('open');
 }
 function closeSheet(){ document.getElementById('sheet-bg').classList.remove('open'); }
+// Accessibility: let keyboard users dismiss any open sheet with Escape (backdrop-tap alone was a keyboard trap).
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('sheet-bg').classList.contains('open')) closeSheet(); });
 
 /* ════════════ i18n ENGINE ════════════
    Captures the English (the inline HTML) on first load, stores Arabic in AR.
@@ -921,8 +970,8 @@ var TOG = {
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1002,6 +1051,12 @@ var AR = {
   home_visit_t:'فحص متابعة وتحاليل دم', home_visit_m:'غداً، السبت ٢١ يونيو · ٨:٣٠ صباحاً<br>د. أيدن · الطابق الأرضي، غرفة ٢',
   tag_nextvisit:'موعدك التالي',
   home_inj_t:'حقنة الليلة · ٩:٠٠ مساءً', home_inj_m:'غونال-إف — اضغطي لخطوات الاستخدام',
+  today_label:'اليوم', today_sub:'قائمة لطيفة — اضغطي عند إتمام كل مهمة.',
+  task1_t:'حقنة — غونال-إف', task1_m:'الليلة · ٩:٠٠ مساءً · ذاتية الإعطاء',
+  task2_t:'حمض الفوليك · ٥ ملغ', task2_m:'مع الإفطار',
+  task3_t:'أكّدي فحص الغد', task3_m:'السبت ٢١ يونيو · ٨:٣٠ صباحاً',
+  task_markdone:'تحديد كمكتمل', task_isdone:'✓ تم', task_confirm:'تأكيد', task_confirmed:'✓ تم التأكيد',
+  today_foot:'عند تحديد حقنة منزلية كمكتملة، يطّلع فريق رعايتك على ذلك — ليطمئنوا أن دورتك تسير كما ينبغي. نسخة تجريبية — لا يُرسَل شيء فعلياً.',
   home_newresult:'أتاح طبيبك نتيجة جديدة. ستجدينها ضمن <b>النتائج</b>.',
   home_where:'أين أنتِ الآن',
   tl1_t:'بدأ العلاج', tl1_d:'الاستشارة والاتفاق على الخطة',
