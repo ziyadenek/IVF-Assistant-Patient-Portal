@@ -114,6 +114,14 @@
   @keyframes cheerpop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
   .sheet .why-box{background:var(--teal-soft);border-radius:13px;padding:11px 13px;margin-top:12px;font-size:13px;color:var(--ink);line-height:1.55}
   .sheet .why-lbl{font-size:10.5px;font-weight:700;color:var(--teal-deep);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+  /* ── Cycle day-progress rail ── */
+  .cycle-prog{margin-bottom:14px}
+  .cp-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:7px}
+  .cp-day{font-size:15px;font-weight:700;color:var(--ink)}
+  .cp-stage{font-size:11.5px;font-weight:600;color:var(--teal-deep)}
+  .cp-bar{height:7px;border-radius:6px;background:var(--teal-soft);overflow:hidden}
+  .cp-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--teal),var(--teal-deep))}
+  [dir="rtl"] .cp-fill{background:linear-gradient(270deg,var(--teal),var(--teal-deep))}
   .card.tap{cursor:pointer;transition:transform .1s}
   .card.tap:active{transform:scale(.99)}
   .card-row{display:flex;align-items:flex-start;gap:13px}
@@ -410,6 +418,10 @@
 
     <div class="section-label" data-i18n="home_where">Where you are</div>
     <div class="card flat">
+      <div class="cycle-prog">
+        <div class="cp-row"><span class="cp-day" data-i18n="cp_day">Day 7 · stimulation</span><span class="cp-stage" data-i18n="cp_stage">≈ halfway to egg collection</span></div>
+        <div class="cp-bar"><div class="cp-fill" style="width:44%"></div></div>
+      </div>
       <div class="timeline">
         <div class="tl-item done"><div class="t" data-i18n="tl1_t">Treatment started</div><div class="d" data-i18n="tl1_d">Consultation &amp; plan agreed</div></div>
         <div class="tl-item done"><div class="t" data-i18n="tl2_t">Stimulation begins</div><div class="d" data-i18n="tl2_d">Daily injections started</div></div>
@@ -433,6 +445,18 @@
         <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
         <div style="flex:1"><h3 data-i18n="home_learn_t">Understanding your journey</h3><div class="meta" data-i18n="home_learn_m">Short, clear guides for each step</div></div>
         <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
+
+    <div class="section-label" data-i18n="plan_rem">Reminders</div>
+    <div class="card flat">
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t" data-i18n="rem_appt_t">Appointment reminders</div><div class="tr-d" data-i18n="rem_appt_d">A nudge the day before each visit</div></div>
+        <div class="switch on" data-sync="rem_appt" onclick="toggleSwitch(this,'rem_appt')"></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-body"><div class="tr-t" data-i18n="rem_inj_t">Injection reminders</div><div class="tr-d" data-i18n="rem_inj_d">A nightly nudge at your usual time</div></div>
+        <div class="switch on" data-sync="rem_inj" onclick="toggleSwitch(this,'rem_inj')"></div>
       </div>
     </div>
   </div>
@@ -616,11 +640,11 @@
     <div class="card flat">
       <div class="toggle-row">
         <div class="tr-body"><div class="tr-t" data-i18n="rem_appt_t">Appointment reminders</div><div class="tr-d" data-i18n="rem_appt_d">A nudge the day before each visit</div></div>
-        <div class="switch on" onclick="toggleSwitch(this,'rem_appt')"></div>
+        <div class="switch on" data-sync="rem_appt" onclick="toggleSwitch(this,'rem_appt')"></div>
       </div>
       <div class="toggle-row">
         <div class="tr-body"><div class="tr-t" data-i18n="rem_inj_t">Injection reminders</div><div class="tr-d" data-i18n="rem_inj_d">A nightly nudge at your usual time</div></div>
-        <div class="switch on" onclick="toggleSwitch(this,'rem_inj')"></div>
+        <div class="switch on" data-sync="rem_inj" onclick="toggleSwitch(this,'rem_inj')"></div>
       </div>
     </div>
     <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="plan_remnote">Reminders are a convenience to help you remember — <b>they are not medical advice</b>. Always take your medicines exactly as your doctor prescribed, and call the clinic if you're unsure.</span></div>
@@ -703,6 +727,10 @@
     <div class="card tap" onclick="openSheet('c3')"><div class="card-row">
       <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
       <div style="flex:1"><h3 data-i18n="cons_3t">Embryo Freezing Consent</h3><div class="meta" data-i18n="cons_signed3">Signed 7 Jun 2026</div><span class="tag signed" data-i18n="tag_signed4">✓ Signed</span></div>
+    </div></div>
+    <div class="card tap" onclick="openSheet('c4')"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><h3 data-i18n="cons_4t">Embryo Transfer Consent</h3><div class="meta" data-i18n="cons_pending">To sign before your transfer</div><span class="tag await" data-i18n="tag_pending">⏳ Pending</span></div>
     </div></div>
     <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg><span data-i18n="cons_note">These are read-only copies. If you ever want to change or withdraw a consent, please talk to your care team.</span></div>
   </div>
@@ -837,6 +865,7 @@ function toggleSwitch(el, key){
   el.classList.toggle('on');
   if(key){
     var on = el.classList.contains('on');
+    document.querySelectorAll('[data-sync="'+key+'"]').forEach(function(s){ s.classList.toggle('on', on); });
     var label = (TOG[LANG] && TOG[LANG][key]) || key;
     var state = on ? UI[LANG].on : UI[LANG].off;
     toastText(label + ' ' + state);
@@ -922,12 +951,14 @@ function openSheet(id){
   var html = '<h3>'+s.t+'</h3><div class="body-txt"><b>'+s.h+'</b></div><div class="body-txt">'+s.b+'</div>';
   if(s.why){ html += '<div class="why-box"><div class="why-lbl">'+((UI[LANG]||UI.en).why_prescribed)+'</div>'+s.why+'</div>'; }
   if(s.li){ html += '<ul>'; s.li.forEach(function(x){ html += '<li>'+x+'</li>'; }); html += '</ul>'; }
+  if(id==='c1'||id==='c2'||id==='c3'){ html += '<button class="btn ghost" style="margin-top:16px;width:100%" onclick="reqCopy(event)">'+((UI[LANG]||UI.en).cons_copy)+'</button>'; }
   document.getElementById('sheet-content').innerHTML = html;
   document.getElementById('sheet-bg').classList.add('open');
 }
 function closeSheet(){ document.getElementById('sheet-bg').classList.remove('open'); }
 // Accessibility: let keyboard users dismiss any open sheet with Escape (backdrop-tap alone was a keyboard trap).
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('sheet-bg').classList.contains('open')) closeSheet(); });
+function reqCopy(e){ if(e) e.stopPropagation(); closeSheet(); toast('copy_sent'); }
 
 /* ════════════ i18n ENGINE ════════════
    Captures the English (the inline HTML) on first load, stores Arabic in AR.
@@ -969,19 +1000,19 @@ var UI = {
   en:{ on:'on', off:'off', released_on:'Released %s. If you have any questions about this, your care team is happy to talk it through.',
        su_title:'Confirm it’s you', su_sub:'For your privacy, please confirm before we show this result.',
        su_btn:'Use Face ID', su_note:'Demo only — no biometrics are actually used.',
-       draft_note:'', why_prescribed:'Why your team prescribed this' },
+       draft_note:'', why_prescribed:'Why your team prescribed this', cons_copy:'Request a copy' },
   ar:{ on:'مُفعّلة', off:'مُوقفة', released_on:'أُتيحت لكِ في %s. إن كان لديكِ أي سؤال، فريق رعايتك سعيد بالحديث معك.',
        su_title:'تأكيد هويتك', su_sub:'حفاظاً على خصوصيتك، يُرجى التأكيد قبل عرض هذه النتيجة.',
        su_btn:'استخدمي بصمة الوجه', su_note:'نسخة تجريبية فقط — لا تُستخدم أي بصمات فعلياً.',
-       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.', why_prescribed:'لماذا وصفه فريقك' }
+       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.', why_prescribed:'لماذا وصفه فريقك', cons_copy:'طلب نسخة' }
 };
 var TOG = {
   en:{ rem_appt:'Appointment reminders', rem_inj:'Injection reminders' },
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1012,6 +1043,7 @@ var SHEETS = {
   c1:{t:"IVF Treatment Consent",h:"You signed this on 7 June 2026.",b:"This is your agreement to go ahead with IVF treatment as discussed with your doctor. It covers the steps of your cycle, the medicines involved, and what to expect.",li:["A copy is kept securely by your clinic","You can ask your care team any question about it","To change or withdraw it, please speak to your team"]},
   c2:{t:"Anaesthesia Consent",h:"You signed this on 7 June 2026.",b:"Your agreement for the sedation used during egg collection, so the procedure is comfortable for you.",li:["The anaesthetist will see you on the day","You'll have a chance to ask questions before"]},
   c3:{t:"Embryo Freezing Consent",h:"You signed this on 7 June 2026.",b:"Your agreement about freezing and storing any suitable embryos not used in a fresh transfer.",li:["Covers how long embryos are stored","Your wishes can be reviewed with your team at any time"]},
+  c4:{t:"Embryo Transfer Consent",h:"Not signed yet — to be completed before your transfer.",b:"This is your agreement for transferring an embryo to the womb. Your team will go through it with you and you'll sign it together before the transfer day.",li:["Nothing happens until you've signed it","Your nurse will arrange a time to complete it with you","Ask anything you're unsure about — there's no rush"]},
   e1:{t:"Stimulation — what the injections do",h:"Where you are now.",b:"During stimulation, the daily injections gently encourage your ovaries to grow several follicles at once, instead of the single one in a natural cycle. More follicles means a better chance of collecting several eggs.",li:["Scans and blood tests track how your follicles grow","Doses may be adjusted along the way — that's normal","Some bloating or tenderness is common; tell your team if you're worried"]},
   e2:{t:"Egg collection — the day",h:"What to expect.",b:"Egg collection is a short procedure, usually around 20–30 minutes, done under light sedation so you're comfortable. A fine needle gently collects the fluid from each follicle, and the eggs are found in the lab.",li:["You'll be asked not to eat beforehand — your team will tell you when to stop","Plan to rest for the remainder of the day","Someone should accompany you home after sedation"]},
   e3:{t:"In the lab — how fertilisation works",h:"What happens to your eggs.",b:"After collection, our embryologists care for your eggs. They're combined with sperm (sometimes by injecting a single sperm into each egg, called ICSI), then watched closely as they hopefully fertilise and begin to grow into embryos.",li:["The lab updates your team on how your embryos develop","Embryos are grown in carefully controlled incubators","Your team will talk you through the results"]},
@@ -1026,6 +1058,7 @@ var SHEETS = {
   c1:{t:"موافقة على علاج أطفال الأنابيب",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"هذه موافقتك على المضي في علاج أطفال الأنابيب كما نوقش مع طبيبك. تشمل مراحل دورتك العلاجية والأدوية المستخدمة وما يمكن توقّعه.",li:["تحتفظ العيادة بنسخة بشكل آمن","يمكنك سؤال فريق رعايتك عن أي تفصيل فيها","لتعديلها أو سحبها، يُرجى التحدث مع فريقك"]},
   c2:{t:"موافقة على التخدير",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على التخدير المستخدم أثناء سحب البويضات، ليكون الإجراء مريحاً لكِ.",li:["سيقابلك طبيب التخدير في اليوم نفسه","ستتاح لكِ فرصة لطرح الأسئلة قبلها"]},
   c3:{t:"موافقة على تجميد الأجنّة",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على تجميد وحفظ أي أجنّة مناسبة لم تُستخدم في النقل الطازج.",li:["تشمل مدة حفظ الأجنّة","يمكن مراجعة رغباتك مع فريقك في أي وقت"]},
+  c4:{t:"موافقة على نقل الأجنّة",h:"لم تُوقَّع بعد — تُستكمل قبل موعد النقل.",b:"هذه موافقتك على نقل جنين إلى الرحم. سيستعرضها فريقك معكِ وتوقّعينها معاً قبل يوم النقل.",li:["لا يحدث أي شيء قبل توقيعك","ستحدّد ممرضتك وقتاً لاستكمالها معكِ","اسألي عن أي شيء غير واضح — لا داعي للعجلة"]},
   e1:{t:"التنشيط — ماذا تفعل الحُقن",h:"أين أنتِ الآن.",b:"خلال التنشيط، تشجّع الحُقن اليومية المبيضين بلطف على إنتاج عدة حُويصلات في آنٍ واحد بدلاً من حويصلة واحدة في الدورة الطبيعية. وكثرة الحويصلات تعني فرصة أفضل لجمع عدة بويضات.",li:["تتابع الفحوصات وتحاليل الدم نموّ حويصلاتك","قد تُعدّل الجرعات أثناء العلاج — وهذا أمر طبيعي","بعض الانتفاخ أو الإيلام شائع؛ أخبري فريقك إن قلقتِ"]},
   e2:{t:"سحب البويضات — اليوم",h:"ما الذي تتوقّعينه.",b:"سحب البويضات إجراء قصير، عادةً نحو ٢٠–٣٠ دقيقة، يُجرى تحت تخدير خفيف لراحتك. تُجمع السوائل من كل حويصلة بإبرة دقيقة، وتُستخرج البويضات في المختبر.",li:["سيُطلب منك الامتناع عن الطعام مسبقاً — سيخبرك فريقك متى تتوقفين","خطّطي للراحة بقية اليوم","يُفضّل أن يرافقك أحد إلى المنزل بعد التخدير"]},
   e3:{t:"في المختبر — كيف يحدث الإخصاب",h:"ماذا يحدث لبويضاتك.",b:"بعد السحب، يعتني أخصائيو الأجنّة ببويضاتك. تُجمع مع الحيوانات المنوية (أحياناً بحقن حيوان منوي واحد في كل بويضة، ويُسمى الحقن المجهري)، ثم تُراقَب عن كثب وهي تُخصَّب وتبدأ بالنمو لتصبح أجنّة.",li:["يُطلع المختبر فريقك على تطوّر أجنّتك","تُنمّى الأجنّة في حاضنات مُحكمة الضبط","سيشرح لكِ فريقك النتائج"]},
@@ -1070,6 +1103,7 @@ var AR = {
   today_cheer:'أنجزتِ مهام اليوم — أحسنتِ. يطمئن فريق رعايتك أنكِ تسيرين على المسار.',
   home_newresult:'أتاح طبيبك نتيجة جديدة. ستجدينها ضمن <b>النتائج</b>.',
   home_where:'أين أنتِ الآن',
+  cp_day:'اليوم ٧ · التنشيط', cp_stage:'≈ منتصف الطريق إلى سحب البويضات',
   tl1_t:'بدأ العلاج', tl1_d:'الاستشارة والاتفاق على الخطة',
   tl2_t:'يبدأ التنشيط', tl2_d:'بدء الحُقن اليومية',
   tl3_t:'المتابعة', tl3_d:'فحوصات وتحاليل — أنتِ هنا',
@@ -1151,6 +1185,7 @@ var AR = {
   cons_1t:'موافقة على علاج أطفال الأنابيب', cons_signed:'وُقّعت ٧ يونيو ٢٠٢٦', tag_signed:'✓ مُوقّعة',
   cons_2t:'موافقة على التخدير', cons_signed2:'وُقّعت ٧ يونيو ٢٠٢٦', tag_signed3:'✓ مُوقّعة',
   cons_3t:'موافقة على تجميد الأجنّة', cons_signed3:'وُقّعت ٧ يونيو ٢٠٢٦', tag_signed4:'✓ مُوقّعة',
+  cons_4t:'موافقة على نقل الأجنّة', cons_pending:'تُوقَّع قبل موعد النقل', tag_pending:'⏳ بانتظار التوقيع',
   cons_note:'هذه نسخ للقراءة فقط. إن رغبتِ يوماً في تعديل موافقة أو سحبها، يُرجى التحدث مع فريق رعايتك.',
   // account
   acct_title:'بياناتك وخصوصيتك', acct_lede:'بهوية مَن سجّلتِ الدخول، وكيف تُحفظ معلوماتك بأمان.',
