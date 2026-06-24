@@ -110,6 +110,10 @@
   .task.done .task-do{display:none}
   .task.done .task-done-lbl{display:inline-block}
   .task-foot{font-size:11.5px;color:var(--ink-faint);margin-top:8px;line-height:1.5;padding-top:10px;border-top:1px solid var(--line)}
+  .today-cheer{display:flex;align-items:center;gap:8px;background:var(--rose-soft);border-radius:13px;padding:11px 13px;margin-top:10px;font-size:13px;font-weight:600;color:var(--teal-deep);line-height:1.5;animation:cheerpop .35s ease}
+  @keyframes cheerpop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+  .sheet .why-box{background:var(--teal-soft);border-radius:13px;padding:11px 13px;margin-top:12px;font-size:13px;color:var(--ink);line-height:1.55}
+  .sheet .why-lbl{font-size:10.5px;font-weight:700;color:var(--teal-deep);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
   .card.tap{cursor:pointer;transition:transform .1s}
   .card.tap:active{transform:scale(.99)}
   .card-row{display:flex;align-items:flex-start;gap:13px}
@@ -395,6 +399,7 @@
         <span class="task-body"><span class="task-t" data-i18n="task3_t">Confirm tomorrow's scan</span><span class="task-m" data-i18n="task3_m">Sat 21 Jun · 8:30 AM</span></span>
         <span class="task-do" data-i18n="task_confirm">Confirm</span><span class="task-done-lbl" data-i18n="task_confirmed">✓ Confirmed</span>
       </div>
+      <div class="today-cheer" hidden>🌿 <span data-i18n="today_cheer">All done for today — nicely done. Your care team can see you're on track.</span></div>
       <div class="task-foot" data-i18n="today_foot">When you mark a home injection done, your care team can see it — so they know your cycle is on track. Demo only — nothing is actually sent.</div>
     </div>
 
@@ -845,7 +850,11 @@ function markTask(el){
   var total = card.querySelectorAll('.task').length;
   var done = card.querySelectorAll('.task.done').length;
   var c = card.querySelector('.task-count'); if(c) c.textContent = done + '/' + total;
-  if(el.classList.contains('done')) toast('task_logged');
+  var cheer = card.querySelector('.today-cheer');
+  var wasAll = cheer && !cheer.hidden;
+  if(cheer) cheer.hidden = (done < total);
+  if(done === total && !wasAll) toast('today_done');
+  else if(el.classList.contains('done')) toast('task_logged');
 }
 function toastText(msg){
   var t = document.getElementById('toast');
@@ -911,6 +920,7 @@ function openSheet(id){
   var dict = SHEETS[LANG] || SHEETS.en;
   var s = dict[id] || SHEETS.en[id]; if(!s) return;
   var html = '<h3>'+s.t+'</h3><div class="body-txt"><b>'+s.h+'</b></div><div class="body-txt">'+s.b+'</div>';
+  if(s.why){ html += '<div class="why-box"><div class="why-lbl">'+((UI[LANG]||UI.en).why_prescribed)+'</div>'+s.why+'</div>'; }
   if(s.li){ html += '<ul>'; s.li.forEach(function(x){ html += '<li>'+x+'</li>'; }); html += '</ul>'; }
   document.getElementById('sheet-content').innerHTML = html;
   document.getElementById('sheet-bg').classList.add('open');
@@ -959,19 +969,19 @@ var UI = {
   en:{ on:'on', off:'off', released_on:'Released %s. If you have any questions about this, your care team is happy to talk it through.',
        su_title:'Confirm it’s you', su_sub:'For your privacy, please confirm before we show this result.',
        su_btn:'Use Face ID', su_note:'Demo only — no biometrics are actually used.',
-       draft_note:'' },
+       draft_note:'', why_prescribed:'Why your team prescribed this' },
   ar:{ on:'مُفعّلة', off:'مُوقفة', released_on:'أُتيحت لكِ في %s. إن كان لديكِ أي سؤال، فريق رعايتك سعيد بالحديث معك.',
        su_title:'تأكيد هويتك', su_sub:'حفاظاً على خصوصيتك، يُرجى التأكيد قبل عرض هذه النتيجة.',
        su_btn:'استخدمي بصمة الوجه', su_note:'نسخة تجريبية فقط — لا تُستخدم أي بصمات فعلياً.',
-       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.' }
+       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.', why_prescribed:'لماذا وصفه فريقك' }
 };
 var TOG = {
   en:{ rem_appt:'Appointment reminders', rem_inj:'Injection reminders' },
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1008,9 +1018,9 @@ var SHEETS = {
   e4:{t:"Embryo transfer — the day",h:"The next milestone.",b:"Transfer is a gentle, quick procedure — usually painless and without sedation. A soft, thin catheter places the chosen embryo into your womb. Many people describe it as similar to a smear test.",li:["You can usually return to normal activity soon after","Your team will explain when to take a pregnancy test","Try to be kind to yourself during the wait"]},
   e5:{t:"Looking after you",h:"Your wellbeing matters.",b:"IVF asks a lot of you — emotionally as well as physically. Rest when you need to, lean on people you trust, and remember the waiting times are often the hardest part. That's completely normal.",li:["Gentle movement and good sleep help","It's okay to ask for emotional support","Your care team is here for the worries too, not just the medical questions"]},
   e6:{t:"Common questions",h:"Things people often ask.",b:"Every journey is different, and no question is too small. Here are a few we hear often — but please always ask your own team about your specific situation.",li:["“Is this cramping normal?” — often yes, but tell us if it's severe","“Can I exercise?” — gentle activity is usually fine","“What if I miss an injection?” — call us straight away, don't double up"]},
-  m1:{t:"Gonal-F",h:"Evening injection.",b:"Gonal-F is one of the medicines that helps your follicles grow. It comes as a pre-filled pen.",li:["Take it out of the fridge a few minutes before — it's more comfortable at room temperature","Dial the dose your doctor prescribed — check it carefully","Inject into the fatty part of your tummy, a little away from your belly button","Rotate the spot each evening to avoid soreness"]},
-  m2:{t:"Cetrotide",h:"Morning injection.",b:"Cetrotide helps stop your body releasing the eggs too early, so they can be collected at the right time.",li:["Keep it in the fridge until you use it","Follow the mixing steps in the box if it needs preparing","Inject into your tummy as shown by your nurse"]},
-  m3:{t:"Trigger injection",h:"Timing is important.",b:"The trigger is the final injection that matures your eggs before collection. The exact time matters a great deal — your team will tell you precisely when to take it.",li:["Take it at the EXACT time your team gives you","Set an alarm so you don't miss it","If anything goes wrong with the timing, call the clinic immediately"]}
+  m1:{t:"Gonal-F",h:"Evening injection.",b:"Gonal-F is one of the medicines that helps your follicles grow. It comes as a pre-filled pen.",li:["Take it out of the fridge a few minutes before — it's more comfortable at room temperature","Dial the dose your doctor prescribed — check it carefully","Inject into the fatty part of your tummy, a little away from your belly button","Rotate the spot each evening to avoid soreness"],why:"Your team prescribed this to help several follicles grow together this cycle, so more eggs can mature for collection. The exact dose always comes from your doctor."},
+  m2:{t:"Cetrotide",h:"Morning injection.",b:"Cetrotide helps stop your body releasing the eggs too early, so they can be collected at the right time.",li:["Keep it in the fridge until you use it","Follow the mixing steps in the box if it needs preparing","Inject into your tummy as shown by your nurse"],why:"It's prescribed to stop your body releasing the eggs too early, so your collection can be timed correctly."},
+  m3:{t:"Trigger injection",h:"Timing is important.",b:"The trigger is the final injection that matures your eggs before collection. The exact time matters a great deal — your team will tell you precisely when to take it.",li:["Take it at the EXACT time your team gives you","Set an alarm so you don't miss it","If anything goes wrong with the timing, call the clinic immediately"],why:"This final injection is prescribed to mature your eggs at exactly the right moment before collection — which is why the timing matters so much."}
  },
  ar:{
   c1:{t:"موافقة على علاج أطفال الأنابيب",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"هذه موافقتك على المضي في علاج أطفال الأنابيب كما نوقش مع طبيبك. تشمل مراحل دورتك العلاجية والأدوية المستخدمة وما يمكن توقّعه.",li:["تحتفظ العيادة بنسخة بشكل آمن","يمكنك سؤال فريق رعايتك عن أي تفصيل فيها","لتعديلها أو سحبها، يُرجى التحدث مع فريقك"]},
@@ -1022,9 +1032,9 @@ var SHEETS = {
   e4:{t:"نقل الأجنّة — اليوم",h:"المحطة التالية.",b:"النقل إجراء لطيف وسريع — عادةً دون ألم ودون تخدير. يُوضع الجنين المختار في الرحم عبر قسطرة رفيعة وناعمة. يصفه كثيرون بأنه أشبه بمسحة عنق الرحم.",li:["يمكنك عادةً العودة لنشاطك المعتاد بعدها بقليل","سيوضّح لكِ فريقك موعد إجراء اختبار الحمل","حاولي أن تكوني لطيفة مع نفسك خلال فترة الانتظار"]},
   e5:{t:"العناية بنفسك",h:"سلامتك النفسية تهمّنا.",b:"رحلة أطفال الأنابيب مُرهقة نفسياً وجسدياً. استريحي حين تحتاجين، واتّكئي على من تثقين بهم، وتذكّري أن فترات الانتظار غالباً أصعب جزء — وهذا طبيعي تماماً.",li:["الحركة اللطيفة والنوم الجيّد يساعدان","لا بأس بطلب الدعم النفسي","فريق رعايتك موجود للمخاوف أيضاً، لا للأسئلة الطبية فقط"]},
   e6:{t:"أسئلة شائعة",h:"أمور يسأل عنها الناس كثيراً.",b:"كل رحلة مختلفة، ولا يوجد سؤال صغير. إليك بعض ما نسمعه كثيراً — لكن اسألي فريقك دائماً عن حالتك تحديداً.",li:["«هل هذا المغص طبيعي؟» — غالباً نعم، لكن أخبرينا إن كان شديداً","«هل يمكنني ممارسة الرياضة؟» — النشاط الخفيف عادةً مناسب","«ماذا لو فاتتني حقنة؟» — اتصلي بنا فوراً ولا تُضاعفي الجرعة"]},
-  m1:{t:"غونال-إف",h:"حقنة مسائية.",b:"غونال-إف أحد الأدوية التي تساعد حويصلاتك على النمو. يأتي على شكل قلم مُعبّأ مسبقاً.",li:["أخرجيه من الثلاجة قبل دقائق — يكون أكثر راحة بحرارة الغرفة","اضبطي الجرعة التي وصفها طبيبك — تحقّقي منها بعناية","احقني في الجزء الدهني من البطن، بعيداً قليلاً عن السُّرّة","غيّري موضع الحقن كل مساء لتجنّب الإيلام"]},
-  m2:{t:"سيتروتيد",h:"حقنة صباحية.",b:"يساعد سيتروتيد على منع جسمك من إطلاق البويضات مبكراً، كي تُجمع في الوقت المناسب.",li:["احفظيه في الثلاجة حتى الاستخدام","اتّبعي خطوات التحضير في العلبة إن لزم","احقني في البطن كما أرشدتك الممرضة"]},
-  m3:{t:"حقنة التفجير",h:"التوقيت مهم.",b:"حقنة التفجير هي الحقنة الأخيرة التي تُنضِج بويضاتك قبل السحب. توقيتها الدقيق مهم جداً — سيخبرك فريقك بالوقت تماماً.",li:["خذيها في الوقت المحدد بالضبط من فريقك","اضبطي منبّهاً كي لا تفوتك","إن حدث أي خلل في التوقيت، اتصلي بالعيادة فوراً"]}
+  m1:{t:"غونال-إف",h:"حقنة مسائية.",b:"غونال-إف أحد الأدوية التي تساعد حويصلاتك على النمو. يأتي على شكل قلم مُعبّأ مسبقاً.",li:["أخرجيه من الثلاجة قبل دقائق — يكون أكثر راحة بحرارة الغرفة","اضبطي الجرعة التي وصفها طبيبك — تحقّقي منها بعناية","احقني في الجزء الدهني من البطن، بعيداً قليلاً عن السُّرّة","غيّري موضع الحقن كل مساء لتجنّب الإيلام"],why:"وصفه فريقك لمساعدة عدة حويصلات على النمو معاً هذه الدورة، كي تنضج بويضات أكثر للسحب. الجرعة الدقيقة تأتي دائماً من طبيبك."},
+  m2:{t:"سيتروتيد",h:"حقنة صباحية.",b:"يساعد سيتروتيد على منع جسمك من إطلاق البويضات مبكراً، كي تُجمع في الوقت المناسب.",li:["احفظيه في الثلاجة حتى الاستخدام","اتّبعي خطوات التحضير في العلبة إن لزم","احقني في البطن كما أرشدتك الممرضة"],why:"يُوصف لمنع جسمك من إطلاق البويضات مبكراً، كي يُضبط توقيت سحب بويضاتك."},
+  m3:{t:"حقنة التفجير",h:"التوقيت مهم.",b:"حقنة التفجير هي الحقنة الأخيرة التي تُنضِج بويضاتك قبل السحب. توقيتها الدقيق مهم جداً — سيخبرك فريقك بالوقت تماماً.",li:["خذيها في الوقت المحدد بالضبط من فريقك","اضبطي منبّهاً كي لا تفوتك","إن حدث أي خلل في التوقيت، اتصلي بالعيادة فوراً"],why:"تُوصف هذه الحقنة الأخيرة لإنضاج بويضاتك في الوقت المناسب تماماً قبل السحب — ولهذا توقيتها بالغ الأهمية."}
  }
 };
 
@@ -1057,6 +1067,7 @@ var AR = {
   task3_t:'أكّدي فحص الغد', task3_m:'السبت ٢١ يونيو · ٨:٣٠ صباحاً',
   task_markdone:'تحديد كمكتمل', task_isdone:'✓ تم', task_confirm:'تأكيد', task_confirmed:'✓ تم التأكيد',
   today_foot:'عند تحديد حقنة منزلية كمكتملة، يطّلع فريق رعايتك على ذلك — ليطمئنوا أن دورتك تسير كما ينبغي. نسخة تجريبية — لا يُرسَل شيء فعلياً.',
+  today_cheer:'أنجزتِ مهام اليوم — أحسنتِ. يطمئن فريق رعايتك أنكِ تسيرين على المسار.',
   home_newresult:'أتاح طبيبك نتيجة جديدة. ستجدينها ضمن <b>النتائج</b>.',
   home_where:'أين أنتِ الآن',
   tl1_t:'بدأ العلاج', tl1_d:'الاستشارة والاتفاق على الخطة',
