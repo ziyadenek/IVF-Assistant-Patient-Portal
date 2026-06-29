@@ -7,6 +7,9 @@
 !README.md
 *.docx
 *.pdf
+# ...but DO publish the app's own assets (images + sample consent PDFs)
+!assets/
+!assets/**
 .DS_Store
 Thumbs.db
 desktop.ini
