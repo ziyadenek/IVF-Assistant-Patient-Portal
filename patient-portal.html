@@ -319,6 +319,7 @@
   .stars{display:flex;gap:10px;justify-content:center;margin:10px 0 4px}
   .stars span{font-size:30px;cursor:pointer;filter:grayscale(1);opacity:.45;transition:.1s}
   .stars span.on{filter:none;opacity:1}
+  .affirm{background:var(--rose-soft);border-radius:16px;padding:18px 16px;text-align:center;color:#b15740;font-style:italic;font-size:14.5px;line-height:1.6;margin:8px 0 4px}
 </style>
 </head>
 <body>
@@ -475,6 +476,14 @@
       </div>
     </div>
 
+    <div class="card tap" onclick="go('wellbeing',null)">
+      <div class="card-row">
+        <div class="ic rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg></div>
+        <div style="flex:1"><h3 data-i18n="well_home_t">Looking after you</h3><div class="meta" data-i18n="well_home_m">Gentle wellbeing support for the journey</div></div>
+        <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
+
     <div class="section-label" data-i18n="plan_rem">Reminders</div>
     <div class="card flat">
       <div class="toggle-row">
@@ -622,6 +631,10 @@
       <button class="menu-item" onclick="go('learn',null)">
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
         <span class="mi-t"><span data-i18n="more_learn_t">Learn</span><span class="mi-d" data-i18n="more_learn_d">Guides for each step of your journey</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('wellbeing',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg></span>
+        <span class="mi-t"><span data-i18n="more_well_t">Wellbeing &amp; support</span><span class="mi-d" data-i18n="more_well_d">Caring for yourself through IVF</span></span><span class="chev">›</span>
       </button>
       <button class="menu-item" onclick="go('consents',null)">
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
@@ -783,6 +796,49 @@
     <div class="notice" style="margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="learn_note">These guides are general information reviewed by your clinic — they don't replace the advice your own team gives you.</span></div>
   </div>
 
+  <!-- WELLBEING -->
+  <div class="screen" id="s-wellbeing">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
+    <h2 data-i18n="well_title">Looking after you</h2>
+    <p class="lede" data-i18n="well_lede">IVF asks a lot of you — emotionally and physically. Here are gentle ways to care for yourself along the way.</p>
+
+    <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg><span data-i18n="well_intro">However you're feeling is okay — even the hard days. Be kind to yourself; you're doing your best.</span></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg></div>
+      <div><h3 data-i18n="w1t">Your feelings are valid</h3><div class="meta" data-i18n="w1d">The highs and lows are normal. Be gentle with yourself. If it feels heavy, a fertility counsellor can really help — just ask your team.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h13a3 3 0 1 0-3-5"/><path d="M2 16h17a3 3 0 1 1-3 5"/></svg></div>
+      <div><h3 data-i18n="w2t">Finding calm</h3><div class="meta" data-i18n="w2d">When it builds up, breathe in for 4 and out for 6, for a minute. A little daily mindfulness — or a distraction you love, like baking or a good book — helps too.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+      <div><h3 data-i18n="w3t">Gentle movement</h3><div class="meta" data-i18n="w3d">A 20-minute walk most days lifts your mood and clears your head. Anything more strenuous, check with your team first.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg></div>
+      <div><h3 data-i18n="w4t">Nourish &amp; rest</h3><div class="meta" data-i18n="w4d">There's no perfect diet — Mediterranean-style eating (vegetables, olive oil, fish, whole grains) is a gentle choice. And protect your sleep: wind down with calm music, not your phone.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div><h3 data-i18n="w5t">You're not alone</h3><div class="meta" data-i18n="w5d">Lean on people you trust. Set 'fertility-free' times where treatment talk is off-limits, and consider a support group of people who understand.</div></div>
+    </div></div>
+
+    <div class="card"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
+      <div><h3 data-i18n="w6t">The two-week wait</h3><div class="meta" data-i18n="w6d">Often the hardest part. Symptoms — or none — don't reliably predict the result. Try writing one worry and one kind thought each day; it helps the storm settle.</div></div>
+    </div></div>
+
+    <div class="affirm" data-i18n="well_affirm">“I am allowed to feel every emotion. I am doing my best — and that's enough.”</div>
+
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span data-i18n="well_support">If you feel overwhelmed, anxious or low for more than a few days, please tell your care team — they're here for the emotional side too, not just the medical. This app isn't for emergencies; if you're in crisis, contact your local emergency services.</span></div>
+  </div>
+
   <!-- CONSENTS -->
   <div class="screen" id="s-consents">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
@@ -941,7 +997,7 @@ function navBtn(s){ return document.querySelector('.nav button[data-s="'+s+'"]')
 function go(s, btn){
   document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active')});
   var el = document.getElementById('s-'+s); if(el) el.classList.add('active');
-  var sub = ['plan','team','meds','learn','consents','account','about','clinic'];
+  var sub = ['plan','team','meds','learn','wellbeing','consents','account','about','clinic'];
   var navTarget = btn || navBtn(s) || (sub.indexOf(s)>=0 ? navBtn('more') : null);
   document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('on')});
   if(navTarget) navTarget.classList.add('on');
@@ -1363,7 +1419,20 @@ var AR = {
   clinic_name:'ميديتيرا للخصوبة', clinic_motto:'نرعى رحلتك نحو الأبوّة والأمومة.',
   clinic_mission_l:'رسالتنا', clinic_mission_d:'تقديم رعاية خصوبة عالمية المستوى بكل تعاطف — نجمع بين التميّز العلمي والدعم الإنساني الصادق، كي يشعر كل مريض بأنه مطّلع ومحترَم ومُعتنى به.',
   clinic_vision_l:'رؤيتنا', clinic_vision_d:'مستقبل يحصل فيه كل من يحلم بأسرة على رعاية خصوبة آمنة وأخلاقية وفعّالة.',
-  clinic_contact_btn:'تواصل العيادة والفريق', clinic_edit_note:'نص تجريبي — استبدليه بشعار عيادتك ورسالتها ورؤيتها الفعلية.'
+  clinic_contact_btn:'تواصل العيادة والفريق', clinic_edit_note:'نص تجريبي — استبدليه بشعار عيادتك ورسالتها ورؤيتها الفعلية.',
+  // wellbeing
+  well_home_t:'العناية بنفسك', well_home_m:'دعم لطيف لعافيتك خلال الرحلة',
+  more_well_t:'العافية والدعم', more_well_d:'العناية بنفسك خلال رحلة أطفال الأنابيب',
+  well_title:'العناية بنفسك', well_lede:'رحلة أطفال الأنابيب مُرهِقة نفسياً وجسدياً. إليكِ طرقاً لطيفة للعناية بنفسك على طول الطريق.',
+  well_intro:'مهما كان شعوركِ فهو مقبول — حتى الأيام الصعبة. كوني لطيفة مع نفسك؛ أنتِ تبذلين أفضل ما لديك.',
+  w1t:'مشاعركِ طبيعية', w1d:'الصعود والهبوط أمر طبيعي. كوني رفيقة بنفسك. وإن ثقُل الأمر، فقد يساعدكِ كثيراً مختصّ نفسي للخصوبة — اسألي فريقك.',
+  w2t:'استعادة الهدوء', w2d:'عند تراكم التوتر، خذي شهيقاً لأربع عدّات وزفيراً لستّ، لمدة دقيقة. وقليل من التأمل اليومي — أو نشاط تحبّينه كالرسم أو كتاب جميل — يساعد أيضاً.',
+  w3t:'حركة لطيفة', w3d:'مشي عشرين دقيقة معظم الأيام يرفع مزاجك ويصفّي ذهنك. وأي مجهود أكبر، راجعي فريقك أولاً.',
+  w4t:'تغذية وراحة', w4d:'لا يوجد نظام غذائي مثالي — لكن النمط المتوسطي (خضار، زيت زيتون، سمك، حبوب كاملة) خيار لطيف. واحمي نومك: استرخي بموسيقى هادئة بدل الهاتف.',
+  w5t:'لستِ وحدك', w5d:'اتّكئي على من تثقين بهم. خصّصي أوقاتاً «خالية من حديث العلاج»، وفكّري في مجموعة دعم تضمّ من يفهمون ما تمرّين به.',
+  w6t:'أسبوعا الانتظار', w6d:'غالباً أصعب جزء. وجود الأعراض أو غيابها لا يتنبّأ بالنتيجة. جرّبي تدوين قلق واحد وفكرة لطيفة واحدة كل يوم؛ يهدّئ ذلك العاصفة.',
+  well_affirm:'«يحقّ لي أن أشعر بكل المشاعر. أنا أبذل أفضل ما لديّ — وهذا يكفي.»',
+  well_support:'إن شعرتِ بالإرهاق أو القلق أو الحزن لأكثر من بضعة أيام، أخبري فريق رعايتك — فهم موجودون للجانب النفسي أيضاً، لا الطبي فقط. هذا التطبيق ليس للحالات الطارئة؛ وإن كنتِ في أزمة، فاتصلي بخدمات الطوارئ المحلية.'
 };
 
 // boot
