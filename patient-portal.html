@@ -581,6 +581,7 @@
     <p class="lede" data-i18n="msg_lede">Updates from your clinic, and a way to ask them to call you back.</p>
 
     <button class="btn" onclick="openCallback()" data-i18n="msg_request">Request a callback</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="openConcern()" data-i18n="msg_concern">Raise a concern</button>
 
     <div class="notice warm" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span data-i18n="msg_emerg">Messages aren't monitored around the clock and <b>aren't for emergencies</b>. If you feel unwell or need urgent help, call the clinic on <b>+971 4 000 0000</b> — or your local emergency number.</span></div>
 
@@ -635,6 +636,10 @@
       <button class="menu-item" onclick="go('wellbeing',null)">
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg></span>
         <span class="mi-t"><span data-i18n="more_well_t">Wellbeing &amp; support</span><span class="mi-d" data-i18n="more_well_d">Caring for yourself through IVF</span></span><span class="chev">›</span>
+      </button>
+      <button class="menu-item" onclick="go('experience',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg></span>
+        <span class="mi-t"><span data-i18n="more_exp_t">Share your experience</span><span class="mi-d" data-i18n="more_exp_d">Quick, anonymous feedback on your care</span></span><span class="chev">›</span>
       </button>
       <button class="menu-item" onclick="go('consents',null)">
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
@@ -839,6 +844,36 @@
     <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span data-i18n="well_support">If you feel overwhelmed, anxious or low for more than a few days, please tell your care team — they're here for the emotional side too, not just the medical. This app isn't for emergencies; if you're in crisis, contact your local emergency services.</span></div>
   </div>
 
+  <!-- EXPERIENCE FEEDBACK (DoH §5.3 touchpoints) -->
+  <div class="screen" id="s-experience">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
+    <h2 data-i18n="exp_title">Share your experience</h2>
+    <p class="lede" data-i18n="exp_lede">Your honest feedback helps your clinic care for everyone better. It's voluntary and anonymous.</p>
+
+    <div class="card tap" onclick="openExpFeedback()"><div class="card-row">
+      <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg></div>
+      <div style="flex:1"><h3 data-i18n="exp_t1">After your first consultation</h3><div class="meta" data-i18n="exp_t1m">Tell us how your first visit felt</div><span class="tag released" data-i18n="exp_open">Open for feedback</span></div>
+      <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+    </div></div>
+
+    <div class="card flat"><div class="card-row">
+      <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
+      <div><h3 data-i18n="exp_t2">Before egg / sperm preservation</h3><div class="meta" data-i18n="exp_soon">Opens when you reach this step</div><span class="tag done" data-i18n="exp_upcoming">Upcoming</span></div>
+    </div></div>
+
+    <div class="card flat"><div class="card-row">
+      <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
+      <div><h3 data-i18n="exp_t3">Before embryo transfer</h3><div class="meta" data-i18n="exp_soon">Opens when you reach this step</div><span class="tag done" data-i18n="exp_upcoming">Upcoming</span></div>
+    </div></div>
+
+    <div class="card flat"><div class="card-row">
+      <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
+      <div><h3 data-i18n="exp_t4">After your treatment</h3><div class="meta" data-i18n="exp_soon">Opens when you reach this step</div><span class="tag done" data-i18n="exp_upcoming">Upcoming</span></div>
+    </div></div>
+
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span data-i18n="exp_note">Voluntary and anonymous. This demo uses sample questions; the live version would use your clinic's validated questionnaire. Not for medical questions — use Messages for those.</span></div>
+  </div>
+
   <!-- CONSENTS -->
   <div class="screen" id="s-consents">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
@@ -997,7 +1032,7 @@ function navBtn(s){ return document.querySelector('.nav button[data-s="'+s+'"]')
 function go(s, btn){
   document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active')});
   var el = document.getElementById('s-'+s); if(el) el.classList.add('active');
-  var sub = ['plan','team','meds','learn','wellbeing','consents','account','about','clinic'];
+  var sub = ['plan','team','meds','learn','wellbeing','experience','consents','account','about','clinic'];
   var navTarget = btn || navBtn(s) || (sub.indexOf(s)>=0 ? navBtn('more') : null);
   document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('on')});
   if(navTarget) navTarget.classList.add('on');
@@ -1147,6 +1182,40 @@ function setStars(n){
 }
 function sendSurvey(){ closeSheet(); toast('survey_thanks'); }
 
+// ── experience feedback (DoH §5.3 touchpoints, demo — not stored) ──
+var expRating = 0;
+function openExpFeedback(){
+  expRating = 0;
+  var s = EXP[LANG] || EXP.en;
+  var stars = [1,2,3,4,5].map(function(n){ return '<span onclick="setExpStars('+n+')">⭐</span>'; }).join('');
+  function sel(q){ return '<div class="field"><label>'+q+'</label><select>'+s.opts.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'; }
+  var html = '<h3>'+s.title+'</h3><div class="body-txt">'+s.intro+'</div>'
+    + '<div class="field" style="margin-bottom:0"><label>'+s.overall+'</label></div>'
+    + '<div class="stars" id="exp-stars">'+stars+'</div>'
+    + sel(s.q1)+sel(s.q2)+sel(s.q3)+sel(s.q4)
+    + '<div class="field"><label>'+s.comment+'</label><textarea rows="3" placeholder="'+s.ph+'"></textarea></div>'
+    + '<button class="btn" onclick="sendExp()">'+s.send+'</button>'
+    + '<p class="login-note" style="text-align:center">'+s.note+'</p>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function setExpStars(n){ expRating = n; document.querySelectorAll('#exp-stars span').forEach(function(x,i){ x.classList.toggle('on', i < n); }); }
+function sendExp(){ closeSheet(); toast('exp_thanks'); }
+
+// ── raise a concern (DoH complaints, demo) ──
+function openConcern(){
+  var c = CONCERN[LANG] || CONCERN.en;
+  var html = '<h3>'+c.title+'</h3><div class="body-txt">'+c.intro+'</div>'
+    + '<div class="field"><label>'+c.q1+'</label><select>'+c.cats.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'
+    + '<div class="field"><label>'+c.q2+'</label><textarea rows="3" placeholder="'+c.ph+'"></textarea></div>'
+    + '<div class="field"><label>'+c.q3+'</label><select>'+c.contact.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'
+    + '<button class="btn" onclick="sendConcern()">'+c.send+'</button>'
+    + '<p class="login-note" style="text-align:center">'+c.note+'</p>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function sendConcern(){ closeSheet(); toast('concern_sent'); }
+
 /* ════════════ i18n ENGINE ════════════
    Captures the English (the inline HTML) on first load, stores Arabic in AR.
    Toggling restores captured English or applies Arabic — missing keys stay English. */
@@ -1198,8 +1267,8 @@ var TOG = {
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)', log_done:'Injection logged (demo)', survey_thanks:'Thank you — your feedback helps (demo)' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)', log_done:'سُجّلت الحقنة (نسخة تجريبية)', survey_thanks:'شكراً لكِ — رأيك يساعدنا (نسخة تجريبية)' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)', log_done:'Injection logged (demo)', survey_thanks:'Thank you — your feedback helps (demo)', exp_thanks:'Thank you — your feedback helps us improve (demo)', concern_sent:'Concern submitted — the team will acknowledge it (demo)' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)', log_done:'سُجّلت الحقنة (نسخة تجريبية)', survey_thanks:'شكراً لكِ — رأيك يساعدنا (نسخة تجريبية)', exp_thanks:'شكراً لكِ — رأيك يساعدنا على التحسين (نسخة تجريبية)', concern_sent:'وصلتنا ملاحظتك — سيتواصل الفريق معك (نسخة تجريبية)' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1222,6 +1291,32 @@ var SURVEY = {
        q1:'بشكل عام، ما مدى فائدة التطبيق؟', opts:['مفيد جداً','مفيد','مقبول','غير مفيد بعد'],
        q2:'هل من شيء تودّين تغييره أو إضافته؟ (اختياري)', ph:'فكرة قصيرة…', send:'إرسال الرأي',
        note:'مجهول · نسخة تجريبية — لا تُحفظ الردود.' }
+};
+var EXP = {
+  en:{ title:'Share your experience', intro:'A few quick, anonymous questions about your care so far. There are no right answers — your honest view helps us improve.',
+       overall:'Overall, how has your experience been?',
+       q1:'Did you get an appointment in good time?', q2:'Did your care team know you and your plan?',
+       q3:'Were you treated with kindness and respect?', q4:'Did you understand what was happening at each step?',
+       opts:['Yes','Mostly','Not really'], comment:'Anything you’d like to add? (optional)', ph:'Your words…', send:'Send feedback',
+       note:'Voluntary & anonymous · demo only — responses aren’t stored. The live version uses your clinic’s validated questionnaire.' },
+  ar:{ title:'شاركينا تجربتك', intro:'بضعة أسئلة قصيرة ومجهولة عن رعايتك حتى الآن. لا توجد إجابات صحيحة أو خاطئة — رأيك الصادق يساعدنا على التحسين.',
+       overall:'بشكل عام، كيف كانت تجربتك؟',
+       q1:'هل حصلتِ على موعد في وقت مناسب؟', q2:'هل كان فريق رعايتك على دراية بكِ وبخطتك؟',
+       q3:'هل عُومِلتِ بلطف واحترام؟', q4:'هل فهمتِ ما كان يجري في كل خطوة؟',
+       opts:['نعم','غالباً','ليس تماماً'], comment:'هل تودّين إضافة شيء؟ (اختياري)', ph:'بكلماتك…', send:'إرسال الرأي',
+       note:'طوعي ومجهول · نسخة تجريبية — لا تُحفظ الردود. تستخدم النسخة الحقيقية استبيان عيادتك المعتمد.' }
+};
+var CONCERN = {
+  en:{ title:'Raise a concern', intro:'Tell us what’s troubling you. We take every concern seriously and aim to acknowledge it within one working day.',
+       q1:'What’s it about?', cats:['My care or treatment','Communication','Facilities or comfort','Billing','Something else'],
+       q2:'What happened? (optional)', ph:'In your own words…',
+       q3:'How should we reach you?', contact:['Call me','Message me in the app','Please don’t contact me'],
+       send:'Submit concern', note:'Not for emergencies. For urgent help, call the clinic or your local emergency number.' },
+  ar:{ title:'تقديم شكوى أو ملاحظة', intro:'أخبرينا بما يقلقك. نأخذ كل ملاحظة على محمل الجدّ ونسعى للردّ خلال يوم عمل واحد.',
+       q1:'ما الموضوع؟', cats:['رعايتي أو علاجي','التواصل','المرافق والراحة','الفواتير','شيء آخر'],
+       q2:'ماذا حدث؟ (اختياري)', ph:'بكلماتك الخاصة…',
+       q3:'كيف نتواصل معك؟', contact:['اتصلوا بي','راسلوني في التطبيق','أفضّل ألا يُتواصل معي'],
+       send:'إرسال الملاحظة', note:'ليست للحالات الطارئة. للمساعدة العاجلة، اتصلي بالعيادة أو برقم الطوارئ المحلي.' }
 };
 
 /* ════════════ Dynamic content: results + sheets ════════════ */
@@ -1432,7 +1527,15 @@ var AR = {
   w5t:'لستِ وحدك', w5d:'اتّكئي على من تثقين بهم. خصّصي أوقاتاً «خالية من حديث العلاج»، وفكّري في مجموعة دعم تضمّ من يفهمون ما تمرّين به.',
   w6t:'أسبوعا الانتظار', w6d:'غالباً أصعب جزء. وجود الأعراض أو غيابها لا يتنبّأ بالنتيجة. جرّبي تدوين قلق واحد وفكرة لطيفة واحدة كل يوم؛ يهدّئ ذلك العاصفة.',
   well_affirm:'«يحقّ لي أن أشعر بكل المشاعر. أنا أبذل أفضل ما لديّ — وهذا يكفي.»',
-  well_support:'إن شعرتِ بالإرهاق أو القلق أو الحزن لأكثر من بضعة أيام، أخبري فريق رعايتك — فهم موجودون للجانب النفسي أيضاً، لا الطبي فقط. هذا التطبيق ليس للحالات الطارئة؛ وإن كنتِ في أزمة، فاتصلي بخدمات الطوارئ المحلية.'
+  well_support:'إن شعرتِ بالإرهاق أو القلق أو الحزن لأكثر من بضعة أيام، أخبري فريق رعايتك — فهم موجودون للجانب النفسي أيضاً، لا الطبي فقط. هذا التطبيق ليس للحالات الطارئة؛ وإن كنتِ في أزمة، فاتصلي بخدمات الطوارئ المحلية.',
+  // experience feedback + concern (complements module 43)
+  more_exp_t:'شاركينا تجربتك', more_exp_d:'ملاحظات سريعة ومجهولة عن رعايتك',
+  msg_concern:'تقديم شكوى أو ملاحظة',
+  exp_title:'شاركينا تجربتك', exp_lede:'رأيك الصادق يساعد عيادتك على رعاية الجميع بشكل أفضل. وهو طوعي ومجهول.',
+  exp_t1:'بعد استشارتك الأولى', exp_t1m:'أخبرينا كيف شعرتِ في زيارتك الأولى', exp_open:'مفتوح للملاحظات',
+  exp_t2:'قبل حفظ البويضات / الحيوانات المنوية', exp_t3:'قبل نقل الأجنّة', exp_t4:'بعد علاجك',
+  exp_soon:'يُفتح عند وصولك لهذه المرحلة', exp_upcoming:'قادم',
+  exp_note:'طوعي ومجهول. تستخدم هذه النسخة التجريبية أسئلة عيّنة؛ وستستخدم النسخة الحقيقية استبيان عيادتك المعتمد. ليست للأسئلة الطبية — استخدمي الرسائل لذلك.'
 };
 
 // boot
