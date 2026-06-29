@@ -44,6 +44,9 @@
   .mark{width:64px;height:64px;border-radius:18px;margin:0 auto 18px;display:grid;place-items:center;
     background:linear-gradient(150deg,var(--teal),var(--teal-deep));color:#fff}
   .mark svg{width:34px;height:34px}
+  .clinic-logo{width:74px;height:74px;border-radius:18px;object-fit:contain;margin:0 auto 10px;display:block;background:var(--card);box-shadow:var(--shadow)}
+  .clinic-name{font-size:17px;font-weight:700;color:var(--teal-deep)}
+  .clinic-motto{font-size:13px;color:var(--ink-soft);font-style:italic;margin-top:3px}
   .login-card h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
   .login-card .sub{color:var(--ink-soft);font-size:14px;margin-top:6px;margin-bottom:24px}
   .field{text-align:left;margin-bottom:14px}
@@ -192,6 +195,7 @@
   /* avatars / care team */
   .avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
     font-size:16px;font-weight:700;color:#fff}
+  .avatar svg{width:24px;height:24px}
   .team-reach{font-size:12.5px;color:var(--teal-deep);font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:5px;cursor:pointer}
   .team-reach svg{width:14px;height:14px}
 
@@ -292,6 +296,29 @@
   .nav button.on{color:var(--teal-deep)}
   .nav .ndot{position:absolute;top:2px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:var(--rose);border:1.5px solid #fff}
   [dir="rtl"] .nav .ndot{right:auto;left:calc(50% - 16px)}
+
+  /* patient id, infographics, clinic links, injection log, survey */
+  .patient-id{font-size:11.5px;color:var(--ink-faint);margin-top:6px;font-weight:600;letter-spacing:.02em}
+  .sheet-img{width:100%;border-radius:14px;border:1px solid var(--line);margin:12px 0 4px;display:block}
+  .pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--teal-soft);
+    color:var(--teal-deep);font-weight:600;font-size:14px;padding:12px;border-radius:13px;margin-top:14px;cursor:pointer}
+  .pdf-btn svg{width:17px;height:17px}
+  .clinic-link{display:flex;align-items:center;gap:12px;padding:13px 2px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
+  .clinic-link:last-child{border-bottom:none}
+  .clinic-link .cl-ic{width:34px;height:34px;border-radius:10px;background:var(--teal-soft);color:var(--teal-deep);display:grid;place-items:center;flex-shrink:0}
+  .clinic-link .cl-ic svg{width:17px;height:17px}
+  .clinic-link .cl-t{font-size:14px;font-weight:600;display:block}
+  .clinic-link .cl-sub{font-size:12px;color:var(--ink-soft);display:block}
+  .clinic-link .chev{margin-left:auto;color:var(--ink-faint)}
+  [dir="rtl"] .clinic-link .chev{margin-left:0;margin-right:auto;transform:scaleX(-1)}
+  .log-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .log-item:last-child{border-bottom:none}
+  .log-item .li-dot{width:30px;height:30px;border-radius:9px;background:var(--teal-soft);color:var(--teal-deep);display:grid;place-items:center;flex-shrink:0}
+  .log-item .li-dot svg{width:15px;height:15px}
+  .log-empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:14px 0}
+  .stars{display:flex;gap:10px;justify-content:center;margin:10px 0 4px}
+  .stars span{font-size:30px;cursor:pointer;filter:grayscale(1);opacity:.45;transition:.1s}
+  .stars span.on{filter:none;opacity:1}
 </style>
 </head>
 <body>
@@ -301,9 +328,8 @@
 <div class="login-wrap has-badge" id="login">
   <div class="login-card">
     <button class="login-lang" id="login-lang" onclick="toggleLang()">العربية</button>
-    <div class="mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.35-9.5-8.5C.5 9 2 5 5.5 5 8 5 12 8 12 8s4-3 6.5-3C22 5 23.5 9 21.5 12.5 19 16.65 12 21 12 21z"/></svg>
-    </div>
+    <img class="clinic-logo" src="assets/clinic-logo.png" alt="Clinic logo" />
+    <div class="clinic-name" data-i18n="clinic_name">Mediterra Fertility</div>
 
     <div id="step-email">
       <h1 data-i18n="li_welcome">Welcome to your journey</h1>
@@ -352,6 +378,7 @@
       <div>
         <div class="greeting" data-i18n="greeting">Good evening, <b>Layla</b></div>
         <div class="stage-pill"><span class="dot"></span> <span data-i18n="stage">Stimulation · Day 7 of your cycle</span></div>
+        <div class="patient-id" data-i18n="patientid">Patient ID · MFL-2026-0481</div>
       </div>
       <button class="lang-btn" id="app-lang" onclick="toggleLang()">العربية</button>
     </div>
@@ -604,6 +631,10 @@
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
         <span class="mi-t"><span data-i18n="more_acct_t">Your details &amp; privacy</span><span class="mi-d" data-i18n="more_acct_d">Account, sign-in and data protection</span></span><span class="chev">›</span>
       </button>
+      <button class="menu-item" onclick="go('clinic',null)">
+        <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01"/></svg></span>
+        <span class="mi-t"><span data-i18n="more_clinic_t">About your clinic</span><span class="mi-d" data-i18n="more_clinic_d">Mission, vision &amp; contact</span></span><span class="chev">›</span>
+      </button>
       <button class="menu-item" onclick="go('about',null)">
         <span class="mi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
         <span class="mi-t"><span data-i18n="more_about_t">About this app</span><span class="mi-d" data-i18n="more_about_d">What it can and can't do yet</span></span><span class="chev">›</span>
@@ -649,6 +680,15 @@
     </div>
     <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="plan_remnote">Reminders are a convenience to help you remember — <b>they are not medical advice</b>. Always take your medicines exactly as your doctor prescribed, and call the clinic if you're unsure.</span></div>
     <button class="btn ghost" onclick="toast('cal_plan')" data-i18n="plan_addcal">Add my plan to calendar</button>
+
+    <div class="section-label" data-i18n="survey_label">Your feedback</div>
+    <div class="card tap" onclick="openSurvey()">
+      <div class="card-row">
+        <div class="ic rose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8-4.3-4.1 5.9-.9z"/></svg></div>
+        <div style="flex:1"><h3 data-i18n="survey_t">How is the app for you?</h3><div class="meta" data-i18n="survey_m">A quick, anonymous thought helps us improve</div></div>
+        <span class="chev" style="color:var(--ink-faint);align-self:center">›</span>
+      </div>
+    </div>
   </div>
 
   <!-- CARE TEAM -->
@@ -658,26 +698,51 @@
     <p class="lede" data-i18n="team_lede">The people looking after you on your journey.</p>
 
     <div class="card"><div class="card-row">
-      <div class="avatar" style="background:linear-gradient(150deg,#3d9b94,#2c7d77)">AA</div>
+      <div class="avatar" style="background:linear-gradient(150deg,#3d9b94,#2c7d77)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3a1 1 0 0 0-1 1v5a6 6 0 0 0 12 0V4a1 1 0 0 0-1-1"/><path d="M9 15v2a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="11" r="2"/></svg></div>
       <div><h3 data-i18n="team_1n">Dr. Aydın</h3><div class="meta" data-i18n="team_1r">Fertility specialist · your doctor<br>Leads your treatment and makes the medical decisions.</div></div>
     </div></div>
 
     <div class="card"><div class="card-row">
-      <div class="avatar" style="background:linear-gradient(150deg,#e8a598,#c2654f)">M</div>
+      <div class="avatar" style="background:linear-gradient(150deg,#e8a598,#c2654f)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg></div>
       <div><h3 data-i18n="team_2n">Mariam</h3><div class="meta" data-i18n="team_2r">Nurse &amp; care coordinator<br>Your first point of contact for day-to-day questions.</div>
         <span class="team-reach" onclick="go('messages',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span data-i18n="team_reach">Request a callback</span></span>
       </div>
     </div></div>
 
     <div class="card"><div class="card-row">
-      <div class="avatar" style="background:linear-gradient(150deg,#7c9cc4,#5a7aa6)">🔬</div>
+      <div class="avatar" style="background:linear-gradient(150deg,#7c9cc4,#5a7aa6)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg></div>
       <div><h3 data-i18n="team_3n">The embryology team</h3><div class="meta" data-i18n="team_3r">Your lab team<br>They care for your eggs and embryos, and update your doctor on how they're developing.</div></div>
     </div></div>
 
     <div class="card"><div class="card-row">
-      <div class="avatar" style="background:linear-gradient(150deg,#9a8fb8,#6f6394)">R</div>
+      <div class="avatar" style="background:linear-gradient(150deg,#9a8fb8,#6f6394)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
       <div><h3 data-i18n="team_4n">Reception</h3><div class="meta" data-i18n="team_4r">Appointments &amp; admin<br>For scheduling, paperwork and general enquiries.</div></div>
     </div></div>
+
+    <div class="section-label" data-i18n="clinic_reach">Clinic &amp; contact</div>
+    <div class="card">
+      <a class="clinic-link" href="https://www.mediterrafertility.com" target="_blank" rel="noopener">
+        <span class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></svg></span>
+        <span><span class="cl-t" data-i18n="cl_web">Website</span><span class="cl-sub">mediterrafertility.com</span></span><span class="chev">›</span>
+      </a>
+      <a class="clinic-link" href="mailto:info@mediterrafertility.com">
+        <span class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+        <span><span class="cl-t" data-i18n="cl_email">Email</span><span class="cl-sub">info@mediterrafertility.com</span></span><span class="chev">›</span>
+      </a>
+      <a class="clinic-link" href="https://instagram.com/" target="_blank" rel="noopener">
+        <span class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></span>
+        <span><span class="cl-t" data-i18n="cl_ig">Instagram</span><span class="cl-sub">@mediterrafertility</span></span><span class="chev">›</span>
+      </a>
+      <a class="clinic-link" href="https://facebook.com/" target="_blank" rel="noopener">
+        <span class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span>
+        <span><span class="cl-t" data-i18n="cl_fb">Facebook</span><span class="cl-sub">/mediterrafertility</span></span><span class="chev">›</span>
+      </a>
+      <a class="clinic-link" href="tel:+97140000000">
+        <span class="cl-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+        <span><span class="cl-t" data-i18n="cl_call">Call the clinic</span><span class="cl-sub">+971 4 000 0000</span></span><span class="chev">›</span>
+      </a>
+    </div>
+    <div class="notice amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="cl_note">Demo contact details — replace with your clinic's real website, email and social links.</span></div>
 
     <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span data-i18n="team_hours">Clinic hours: Sun–Thu, 8:00 AM – 6:00 PM · <b>+971 4 000 0000</b>. Outside these hours, for anything urgent please call your local emergency number.</span></div>
   </div>
@@ -693,6 +758,13 @@
       <div class="med" onclick="openSheet('m3')"><div class="pill">💉</div><div class="body"><div class="name" data-i18n="meds_m3n">Trigger injection</div><div class="how" data-i18n="meds_m3">Timing matters — your team will tell you when</div></div><span class="chev">›</span></div>
     </div>
     <div class="notice warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="meds_note">These are general instructions. <b>Your prescription and timing come from your doctor</b> — if anything is unclear, call your clinic before injecting.</span></div>
+
+    <div class="section-label" data-i18n="log_title">Injection log</div>
+    <div class="card">
+      <button class="btn" onclick="logInjection()" data-i18n="log_btn">Log an injection now</button>
+      <div id="inj-log" style="margin-top:8px"></div>
+    </div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg><span data-i18n="log_note">This log is your own record on this device, to help you remember. Your clinic isn't alerted by it — for anything urgent, call the clinic.</span></div>
   </div>
 
   <!-- LEARN -->
@@ -784,6 +856,22 @@
     <button class="btn" style="background:transparent;color:#c2654f;margin-top:8px" onclick="signOut()" data-i18n="acct_signout">Sign out</button>
   </div>
 
+  <!-- ABOUT YOUR CLINIC -->
+  <div class="screen" id="s-clinic">
+    <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
+    <div style="text-align:center;margin-bottom:8px">
+      <img class="clinic-logo" src="assets/clinic-logo.png" alt="Clinic logo" />
+      <h2 style="margin-bottom:0" data-i18n="clinic_name">Mediterra Fertility</h2>
+      <p class="clinic-motto" data-i18n="clinic_motto">Caring for your journey to parenthood.</p>
+    </div>
+    <div class="section-label" data-i18n="clinic_mission_l">Our mission</div>
+    <div class="card flat"><div class="body-txt" style="margin-top:0" data-i18n="clinic_mission_d">To provide compassionate, world-class fertility care — combining scientific excellence with genuine human support, so every patient feels informed, respected and cared for.</div></div>
+    <div class="section-label" data-i18n="clinic_vision_l">Our vision</div>
+    <div class="card flat"><div class="body-txt" style="margin-top:0" data-i18n="clinic_vision_d">A future where everyone who dreams of a family has access to safe, ethical and effective fertility care.</div></div>
+    <button class="btn ghost" onclick="go('team',null)" data-i18n="clinic_contact_btn">Clinic contact &amp; team</button>
+    <div class="notice amber" style="margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="clinic_edit_note">Demo text — replace with your clinic's real logo, mission, vision and motto.</span></div>
+  </div>
+
   <!-- ABOUT -->
   <div class="screen" id="s-about">
     <button class="back" onclick="go('more',null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="back">More</span></button>
@@ -853,7 +941,7 @@ function navBtn(s){ return document.querySelector('.nav button[data-s="'+s+'"]')
 function go(s, btn){
   document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active')});
   var el = document.getElementById('s-'+s); if(el) el.classList.add('active');
-  var sub = ['plan','team','meds','learn','consents','account','about'];
+  var sub = ['plan','team','meds','learn','consents','account','about','clinic'];
   var navTarget = btn || navBtn(s) || (sub.indexOf(s)>=0 ? navBtn('more') : null);
   document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('on')});
   if(navTarget) navTarget.classList.add('on');
@@ -948,10 +1036,13 @@ function openResult(id){
 function openSheet(id){
   var dict = SHEETS[LANG] || SHEETS.en;
   var s = dict[id] || SHEETS.en[id]; if(!s) return;
-  var html = '<h3>'+s.t+'</h3><div class="body-txt"><b>'+s.h+'</b></div><div class="body-txt">'+s.b+'</div>';
+  var html = '<h3>'+s.t+'</h3><div class="body-txt"><b>'+s.h+'</b></div>';
+  if(s.img){ html += '<img class="sheet-img" src="'+s.img+'" alt="'+s.t+'" loading="lazy">'; }
+  html += '<div class="body-txt">'+s.b+'</div>';
   if(s.why){ html += '<div class="why-box"><div class="why-lbl">'+((UI[LANG]||UI.en).why_prescribed)+'</div>'+s.why+'</div>'; }
   if(s.li){ html += '<ul>'; s.li.forEach(function(x){ html += '<li>'+x+'</li>'; }); html += '</ul>'; }
-  if(id==='c1'||id==='c2'||id==='c3'){ html += '<button class="btn ghost" style="margin-top:16px;width:100%" onclick="reqCopy(event)">'+((UI[LANG]||UI.en).cons_copy)+'</button>'; }
+  if(s.pdf){ html += '<button class="pdf-btn" onclick="window.open(\''+s.pdf+'\',\'_blank\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> '+((UI[LANG]||UI.en).view_pdf)+'</button>'; }
+  if(id==='c1'||id==='c2'||id==='c3'){ html += '<button class="btn ghost" style="margin-top:10px;width:100%" onclick="reqCopy(event)">'+((UI[LANG]||UI.en).cons_copy)+'</button>'; }
   document.getElementById('sheet-content').innerHTML = html;
   document.getElementById('sheet-bg').classList.add('open');
 }
@@ -959,6 +1050,46 @@ function closeSheet(){ document.getElementById('sheet-bg').classList.remove('ope
 // Accessibility: let keyboard users dismiss any open sheet with Escape (backdrop-tap alone was a keyboard trap).
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && document.getElementById('sheet-bg').classList.contains('open')) closeSheet(); });
 function reqCopy(e){ if(e) e.stopPropagation(); closeSheet(); toast('copy_sent'); }
+
+// ── injection log (demo, stored locally on this device only) ──
+function getInjLog(){ try{ return JSON.parse(localStorage.getItem('ivfDemoInjLog')||'[]'); }catch(e){ return []; } }
+function logInjection(){
+  var l = getInjLog(); l.unshift(Date.now());
+  try{ localStorage.setItem('ivfDemoInjLog', JSON.stringify(l.slice(0,30))); }catch(e){}
+  renderInjLog(); toast('log_done');
+}
+function renderInjLog(){
+  var el = document.getElementById('inj-log'); if(!el) return;
+  var l = getInjLog();
+  if(!l.length){ el.innerHTML = '<div class="log-empty">'+((UI[LANG]||UI.en).log_empty)+'</div>'; return; }
+  var loc = (LANG==='ar') ? 'ar-AE' : 'en-GB';
+  el.innerHTML = l.map(function(ts){
+    var d = new Date(ts);
+    var when = d.toLocaleDateString(loc,{weekday:'short',day:'numeric',month:'short'}) + ' · ' + d.toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'});
+    return '<div class="log-item"><span class="li-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></span><span>'+when+'</span></div>';
+  }).join('');
+}
+
+// ── app survey (demo — responses are not stored) ──
+var surveyRating = 0;
+function openSurvey(){
+  surveyRating = 0;
+  var s = SURVEY[LANG] || SURVEY.en;
+  var stars = [1,2,3,4,5].map(function(n){ return '<span onclick="setStars('+n+')">⭐</span>'; }).join('');
+  var html = '<h3>'+s.title+'</h3><div class="body-txt">'+s.intro+'</div>'
+    + '<div class="stars" id="survey-stars">'+stars+'</div>'
+    + '<div class="field"><label>'+s.q1+'</label><select>'+s.opts.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'
+    + '<div class="field"><label>'+s.q2+'</label><textarea rows="3" placeholder="'+s.ph+'"></textarea></div>'
+    + '<button class="btn" onclick="sendSurvey()">'+s.send+'</button>'
+    + '<p class="login-note" style="text-align:center">'+s.note+'</p>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function setStars(n){
+  surveyRating = n;
+  document.querySelectorAll('#survey-stars span').forEach(function(x,i){ x.classList.toggle('on', i < n); });
+}
+function sendSurvey(){ closeSheet(); toast('survey_thanks'); }
 
 /* ════════════ i18n ENGINE ════════════
    Captures the English (the inline HTML) on first load, stores Arabic in AR.
@@ -1000,19 +1131,19 @@ var UI = {
   en:{ on:'on', off:'off', released_on:'Released %s. If you have any questions about this, your care team is happy to talk it through.',
        su_title:'Confirm it’s you', su_sub:'For your privacy, please confirm before we show this result.',
        su_btn:'Use Face ID', su_note:'Demo only — no biometrics are actually used.',
-       draft_note:'', why_prescribed:'Why your team prescribed this', cons_copy:'Request a copy' },
+       draft_note:'', why_prescribed:'Why your team prescribed this', cons_copy:'Request a copy', view_pdf:'View signed document (PDF)', log_empty:'No injections logged yet.' },
   ar:{ on:'مُفعّلة', off:'مُوقفة', released_on:'أُتيحت لكِ في %s. إن كان لديكِ أي سؤال، فريق رعايتك سعيد بالحديث معك.',
        su_title:'تأكيد هويتك', su_sub:'حفاظاً على خصوصيتك، يُرجى التأكيد قبل عرض هذه النتيجة.',
        su_btn:'استخدمي بصمة الوجه', su_note:'نسخة تجريبية فقط — لا تُستخدم أي بصمات فعلياً.',
-       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.', why_prescribed:'لماذا وصفه فريقك', cons_copy:'طلب نسخة' }
+       draft_note:'الترجمة العربية هنا نسخة تجريبية، بانتظار مراجعة احترافية.', why_prescribed:'لماذا وصفه فريقك', cons_copy:'طلب نسخة', view_pdf:'عرض المستند الموقّع (PDF)', log_empty:'لا توجد حُقن مسجّلة بعد.' }
 };
 var TOG = {
   en:{ rem_appt:'Appointment reminders', rem_inj:'Injection reminders' },
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)', log_done:'Injection logged (demo)', survey_thanks:'Thank you — your feedback helps (demo)' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)', log_done:'سُجّلت الحقنة (نسخة تجريبية)', survey_thanks:'شكراً لكِ — رأيك يساعدنا (نسخة تجريبية)' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1025,6 +1156,16 @@ var CB = {
        q2:'أنسب وقت للاتصال بك', times:['صباحاً (٨–١٢)','ظهراً (١٢–٤)','عصراً (٤–٦)'],
        q3:'أي شيء تودّين إخبارنا به (اختياري)', ph:'ملاحظة قصيرة…', send:'إرسال الطلب',
        note:'ليست للحالات الطارئة. للمساعدة العاجلة، اتصلي بالعيادة أو برقم الطوارئ المحلي.' }
+};
+var SURVEY = {
+  en:{ title:'How is the app for you?', intro:'Your feedback is anonymous and helps us make the portal better.',
+       q1:'Overall, how helpful is the app?', opts:['Very helpful','Helpful','Okay','Not helpful yet'],
+       q2:'Anything you’d change or add? (optional)', ph:'A short thought…', send:'Send feedback',
+       note:'Anonymous · demo only — responses aren’t stored.' },
+  ar:{ title:'كيف تجدين التطبيق؟', intro:'رأيك مجهول ويساعدنا على تحسين البوابة.',
+       q1:'بشكل عام، ما مدى فائدة التطبيق؟', opts:['مفيد جداً','مفيد','مقبول','غير مفيد بعد'],
+       q2:'هل من شيء تودّين تغييره أو إضافته؟ (اختياري)', ph:'فكرة قصيرة…', send:'إرسال الرأي',
+       note:'مجهول · نسخة تجريبية — لا تُحفظ الردود.' }
 };
 
 /* ════════════ Dynamic content: results + sheets ════════════ */
@@ -1040,9 +1181,9 @@ var RESULTS = {
 };
 var SHEETS = {
  en:{
-  c1:{t:"IVF Treatment Consent",h:"You signed this on 7 June 2026.",b:"This is your agreement to go ahead with IVF treatment as discussed with your doctor. It covers the steps of your cycle, the medicines involved, and what to expect.",li:["A copy is kept securely by your clinic","You can ask your care team any question about it","To change or withdraw it, please speak to your team"]},
-  c2:{t:"Anaesthesia Consent",h:"You signed this on 7 June 2026.",b:"Your agreement for the sedation used during egg collection, so the procedure is comfortable for you.",li:["The anaesthetist will see you on the day","You'll have a chance to ask questions before"]},
-  c3:{t:"Embryo Freezing Consent",h:"You signed this on 7 June 2026.",b:"Your agreement about freezing and storing any suitable embryos not used in a fresh transfer.",li:["Covers how long embryos are stored","Your wishes can be reviewed with your team at any time"]},
+  c1:{pdf:"assets/sample-consent-ivf.pdf",t:"IVF Treatment Consent",h:"You signed this on 7 June 2026.",b:"This is your agreement to go ahead with IVF treatment as discussed with your doctor. It covers the steps of your cycle, the medicines involved, and what to expect.",li:["A copy is kept securely by your clinic","You can ask your care team any question about it","To change or withdraw it, please speak to your team"]},
+  c2:{pdf:"assets/sample-consent-anaesthesia.pdf",t:"Anaesthesia Consent",h:"You signed this on 7 June 2026.",b:"Your agreement for the sedation used during egg collection, so the procedure is comfortable for you.",li:["The anaesthetist will see you on the day","You'll have a chance to ask questions before"]},
+  c3:{pdf:"assets/sample-consent-embryo-freezing.pdf",t:"Embryo Freezing Consent",h:"You signed this on 7 June 2026.",b:"Your agreement about freezing and storing any suitable embryos not used in a fresh transfer.",li:["Covers how long embryos are stored","Your wishes can be reviewed with your team at any time"]},
   c4:{t:"Embryo Transfer Consent",h:"Not signed yet — to be completed before your transfer.",b:"This is your agreement for transferring an embryo to the womb. Your team will go through it with you and you'll sign it together before the transfer day.",li:["Nothing happens until you've signed it","Your nurse will arrange a time to complete it with you","Ask anything you're unsure about — there's no rush"]},
   e1:{t:"Stimulation — what the injections do",h:"Where you are now.",b:"During stimulation, the daily injections gently encourage your ovaries to grow several follicles at once, instead of the single one in a natural cycle. More follicles means a better chance of collecting several eggs.",li:["Scans and blood tests track how your follicles grow","Doses may be adjusted along the way — that's normal","Some bloating or tenderness is common; tell your team if you're worried"]},
   e2:{t:"Egg collection — the day",h:"What to expect.",b:"Egg collection is a short procedure, usually around 20–30 minutes, done under light sedation so you're comfortable. A fine needle gently collects the fluid from each follicle, and the eggs are found in the lab.",li:["You'll be asked not to eat beforehand — your team will tell you when to stop","Plan to rest for the remainder of the day","Someone should accompany you home after sedation"]},
@@ -1050,14 +1191,14 @@ var SHEETS = {
   e4:{t:"Embryo transfer — the day",h:"The next milestone.",b:"Transfer is a gentle, quick procedure — usually painless and without sedation. A soft, thin catheter places the chosen embryo into your womb. Many people describe it as similar to a smear test.",li:["You can usually return to normal activity soon after","Your team will explain when to take a pregnancy test","Try to be kind to yourself during the wait"]},
   e5:{t:"Looking after you",h:"Your wellbeing matters.",b:"IVF asks a lot of you — emotionally as well as physically. Rest when you need to, lean on people you trust, and remember the waiting times are often the hardest part. That's completely normal.",li:["Gentle movement and good sleep help","It's okay to ask for emotional support","Your care team is here for the worries too, not just the medical questions"]},
   e6:{t:"Common questions",h:"Things people often ask.",b:"Every journey is different, and no question is too small. Here are a few we hear often — but please always ask your own team about your specific situation.",li:["“Is this cramping normal?” — often yes, but tell us if it's severe","“Can I exercise?” — gentle activity is usually fine","“What if I miss an injection?” — call us straight away, don't double up"]},
-  m1:{t:"Gonal-F",h:"Evening injection.",b:"Gonal-F is one of the medicines that helps your follicles grow. It comes as a pre-filled pen.",li:["Take it out of the fridge a few minutes before — it's more comfortable at room temperature","Dial the dose your doctor prescribed — check it carefully","Inject into the fatty part of your tummy, a little away from your belly button","Rotate the spot each evening to avoid soreness"],why:"Your team prescribed this to help several follicles grow together this cycle, so more eggs can mature for collection. The exact dose always comes from your doctor."},
-  m2:{t:"Cetrotide",h:"Morning injection.",b:"Cetrotide helps stop your body releasing the eggs too early, so they can be collected at the right time.",li:["Keep it in the fridge until you use it","Follow the mixing steps in the box if it needs preparing","Inject into your tummy as shown by your nurse"],why:"It's prescribed to stop your body releasing the eggs too early, so your collection can be timed correctly."},
-  m3:{t:"Trigger injection",h:"Timing is important.",b:"The trigger is the final injection that matures your eggs before collection. The exact time matters a great deal — your team will tell you precisely when to take it.",li:["Take it at the EXACT time your team gives you","Set an alarm so you don't miss it","If anything goes wrong with the timing, call the clinic immediately"],why:"This final injection is prescribed to mature your eggs at exactly the right moment before collection — which is why the timing matters so much."}
+  m1:{img:"assets/gonal-f.jpg",t:"Gonal-F",h:"Evening injection.",b:"Gonal-F is one of the medicines that helps your follicles grow. It comes as a pre-filled pen.",li:["Take it out of the fridge a few minutes before — it's more comfortable at room temperature","Dial the dose your doctor prescribed — check it carefully","Inject into the fatty part of your tummy, a little away from your belly button","Rotate the spot each evening to avoid soreness"],why:"Your team prescribed this to help several follicles grow together this cycle, so more eggs can mature for collection. The exact dose always comes from your doctor."},
+  m2:{img:"assets/cetrotide.jpg",t:"Cetrotide",h:"Morning injection.",b:"Cetrotide helps stop your body releasing the eggs too early, so they can be collected at the right time.",li:["Keep it in the fridge until you use it","Follow the mixing steps in the box if it needs preparing","Inject into your tummy as shown by your nurse"],why:"It's prescribed to stop your body releasing the eggs too early, so your collection can be timed correctly."},
+  m3:{img:"assets/trigger.jpg",t:"Trigger injection",h:"Timing is important.",b:"The trigger is the final injection that matures your eggs before collection. The exact time matters a great deal — your team will tell you precisely when to take it.",li:["Take it at the EXACT time your team gives you","Set an alarm so you don't miss it","If anything goes wrong with the timing, call the clinic immediately"],why:"This final injection is prescribed to mature your eggs at exactly the right moment before collection — which is why the timing matters so much."}
  },
  ar:{
-  c1:{t:"موافقة على علاج أطفال الأنابيب",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"هذه موافقتك على المضي في علاج أطفال الأنابيب كما نوقش مع طبيبك. تشمل مراحل دورتك العلاجية والأدوية المستخدمة وما يمكن توقّعه.",li:["تحتفظ العيادة بنسخة بشكل آمن","يمكنك سؤال فريق رعايتك عن أي تفصيل فيها","لتعديلها أو سحبها، يُرجى التحدث مع فريقك"]},
-  c2:{t:"موافقة على التخدير",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على التخدير المستخدم أثناء سحب البويضات، ليكون الإجراء مريحاً لكِ.",li:["سيقابلك طبيب التخدير في اليوم نفسه","ستتاح لكِ فرصة لطرح الأسئلة قبلها"]},
-  c3:{t:"موافقة على تجميد الأجنّة",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على تجميد وحفظ أي أجنّة مناسبة لم تُستخدم في النقل الطازج.",li:["تشمل مدة حفظ الأجنّة","يمكن مراجعة رغباتك مع فريقك في أي وقت"]},
+  c1:{pdf:"assets/sample-consent-ivf.pdf",t:"موافقة على علاج أطفال الأنابيب",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"هذه موافقتك على المضي في علاج أطفال الأنابيب كما نوقش مع طبيبك. تشمل مراحل دورتك العلاجية والأدوية المستخدمة وما يمكن توقّعه.",li:["تحتفظ العيادة بنسخة بشكل آمن","يمكنك سؤال فريق رعايتك عن أي تفصيل فيها","لتعديلها أو سحبها، يُرجى التحدث مع فريقك"]},
+  c2:{pdf:"assets/sample-consent-anaesthesia.pdf",t:"موافقة على التخدير",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على التخدير المستخدم أثناء سحب البويضات، ليكون الإجراء مريحاً لكِ.",li:["سيقابلك طبيب التخدير في اليوم نفسه","ستتاح لكِ فرصة لطرح الأسئلة قبلها"]},
+  c3:{pdf:"assets/sample-consent-embryo-freezing.pdf",t:"موافقة على تجميد الأجنّة",h:"وقّعتِ عليها في ٧ يونيو ٢٠٢٦.",b:"موافقتك على تجميد وحفظ أي أجنّة مناسبة لم تُستخدم في النقل الطازج.",li:["تشمل مدة حفظ الأجنّة","يمكن مراجعة رغباتك مع فريقك في أي وقت"]},
   c4:{t:"موافقة على نقل الأجنّة",h:"لم تُوقَّع بعد — تُستكمل قبل موعد النقل.",b:"هذه موافقتك على نقل جنين إلى الرحم. سيستعرضها فريقك معكِ وتوقّعينها معاً قبل يوم النقل.",li:["لا يحدث أي شيء قبل توقيعك","ستحدّد ممرضتك وقتاً لاستكمالها معكِ","اسألي عن أي شيء غير واضح — لا داعي للعجلة"]},
   e1:{t:"التنشيط — ماذا تفعل الحُقن",h:"أين أنتِ الآن.",b:"خلال التنشيط، تشجّع الحُقن اليومية المبيضين بلطف على إنتاج عدة حُويصلات في آنٍ واحد بدلاً من حويصلة واحدة في الدورة الطبيعية. وكثرة الحويصلات تعني فرصة أفضل لجمع عدة بويضات.",li:["تتابع الفحوصات وتحاليل الدم نموّ حويصلاتك","قد تُعدّل الجرعات أثناء العلاج — وهذا أمر طبيعي","بعض الانتفاخ أو الإيلام شائع؛ أخبري فريقك إن قلقتِ"]},
   e2:{t:"سحب البويضات — اليوم",h:"ما الذي تتوقّعينه.",b:"سحب البويضات إجراء قصير، عادةً نحو ٢٠–٣٠ دقيقة، يُجرى تحت تخدير خفيف لراحتك. تُجمع السوائل من كل حويصلة بإبرة دقيقة، وتُستخرج البويضات في المختبر.",li:["سيُطلب منك الامتناع عن الطعام مسبقاً — سيخبرك فريقك متى تتوقفين","خطّطي للراحة بقية اليوم","يُفضّل أن يرافقك أحد إلى المنزل بعد التخدير"]},
@@ -1065,9 +1206,9 @@ var SHEETS = {
   e4:{t:"نقل الأجنّة — اليوم",h:"المحطة التالية.",b:"النقل إجراء لطيف وسريع — عادةً دون ألم ودون تخدير. يُوضع الجنين المختار في الرحم عبر قسطرة رفيعة وناعمة. يصفه كثيرون بأنه أشبه بمسحة عنق الرحم.",li:["يمكنك عادةً العودة لنشاطك المعتاد بعدها بقليل","سيوضّح لكِ فريقك موعد إجراء اختبار الحمل","حاولي أن تكوني لطيفة مع نفسك خلال فترة الانتظار"]},
   e5:{t:"العناية بنفسك",h:"سلامتك النفسية تهمّنا.",b:"رحلة أطفال الأنابيب مُرهقة نفسياً وجسدياً. استريحي حين تحتاجين، واتّكئي على من تثقين بهم، وتذكّري أن فترات الانتظار غالباً أصعب جزء — وهذا طبيعي تماماً.",li:["الحركة اللطيفة والنوم الجيّد يساعدان","لا بأس بطلب الدعم النفسي","فريق رعايتك موجود للمخاوف أيضاً، لا للأسئلة الطبية فقط"]},
   e6:{t:"أسئلة شائعة",h:"أمور يسأل عنها الناس كثيراً.",b:"كل رحلة مختلفة، ولا يوجد سؤال صغير. إليك بعض ما نسمعه كثيراً — لكن اسألي فريقك دائماً عن حالتك تحديداً.",li:["«هل هذا المغص طبيعي؟» — غالباً نعم، لكن أخبرينا إن كان شديداً","«هل يمكنني ممارسة الرياضة؟» — النشاط الخفيف عادةً مناسب","«ماذا لو فاتتني حقنة؟» — اتصلي بنا فوراً ولا تُضاعفي الجرعة"]},
-  m1:{t:"غونال-إف",h:"حقنة مسائية.",b:"غونال-إف أحد الأدوية التي تساعد حويصلاتك على النمو. يأتي على شكل قلم مُعبّأ مسبقاً.",li:["أخرجيه من الثلاجة قبل دقائق — يكون أكثر راحة بحرارة الغرفة","اضبطي الجرعة التي وصفها طبيبك — تحقّقي منها بعناية","احقني في الجزء الدهني من البطن، بعيداً قليلاً عن السُّرّة","غيّري موضع الحقن كل مساء لتجنّب الإيلام"],why:"وصفه فريقك لمساعدة عدة حويصلات على النمو معاً هذه الدورة، كي تنضج بويضات أكثر للسحب. الجرعة الدقيقة تأتي دائماً من طبيبك."},
-  m2:{t:"سيتروتيد",h:"حقنة صباحية.",b:"يساعد سيتروتيد على منع جسمك من إطلاق البويضات مبكراً، كي تُجمع في الوقت المناسب.",li:["احفظيه في الثلاجة حتى الاستخدام","اتّبعي خطوات التحضير في العلبة إن لزم","احقني في البطن كما أرشدتك الممرضة"],why:"يُوصف لمنع جسمك من إطلاق البويضات مبكراً، كي يُضبط توقيت سحب بويضاتك."},
-  m3:{t:"حقنة التفجير",h:"التوقيت مهم.",b:"حقنة التفجير هي الحقنة الأخيرة التي تُنضِج بويضاتك قبل السحب. توقيتها الدقيق مهم جداً — سيخبرك فريقك بالوقت تماماً.",li:["خذيها في الوقت المحدد بالضبط من فريقك","اضبطي منبّهاً كي لا تفوتك","إن حدث أي خلل في التوقيت، اتصلي بالعيادة فوراً"],why:"تُوصف هذه الحقنة الأخيرة لإنضاج بويضاتك في الوقت المناسب تماماً قبل السحب — ولهذا توقيتها بالغ الأهمية."}
+  m1:{img:"assets/gonal-f.jpg",t:"غونال-إف",h:"حقنة مسائية.",b:"غونال-إف أحد الأدوية التي تساعد حويصلاتك على النمو. يأتي على شكل قلم مُعبّأ مسبقاً.",li:["أخرجيه من الثلاجة قبل دقائق — يكون أكثر راحة بحرارة الغرفة","اضبطي الجرعة التي وصفها طبيبك — تحقّقي منها بعناية","احقني في الجزء الدهني من البطن، بعيداً قليلاً عن السُّرّة","غيّري موضع الحقن كل مساء لتجنّب الإيلام"],why:"وصفه فريقك لمساعدة عدة حويصلات على النمو معاً هذه الدورة، كي تنضج بويضات أكثر للسحب. الجرعة الدقيقة تأتي دائماً من طبيبك."},
+  m2:{img:"assets/cetrotide.jpg",t:"سيتروتيد",h:"حقنة صباحية.",b:"يساعد سيتروتيد على منع جسمك من إطلاق البويضات مبكراً، كي تُجمع في الوقت المناسب.",li:["احفظيه في الثلاجة حتى الاستخدام","اتّبعي خطوات التحضير في العلبة إن لزم","احقني في البطن كما أرشدتك الممرضة"],why:"يُوصف لمنع جسمك من إطلاق البويضات مبكراً، كي يُضبط توقيت سحب بويضاتك."},
+  m3:{img:"assets/trigger.jpg",t:"حقنة التفجير",h:"التوقيت مهم.",b:"حقنة التفجير هي الحقنة الأخيرة التي تُنضِج بويضاتك قبل السحب. توقيتها الدقيق مهم جداً — سيخبرك فريقك بالوقت تماماً.",li:["خذيها في الوقت المحدد بالضبط من فريقك","اضبطي منبّهاً كي لا تفوتك","إن حدث أي خلل في التوقيت، اتصلي بالعيادة فوراً"],why:"تُوصف هذه الحقنة الأخيرة لإنضاج بويضاتك في الوقت المناسب تماماً قبل السحب — ولهذا توقيتها بالغ الأهمية."}
  }
 };
 
@@ -1209,11 +1350,25 @@ var AR = {
   about_n1:'لا يتّخذ أي قرار طبي — يعرض فقط ما تشاركه عيادتك.',
   about_n2:'لا يحسب جرعتك أو توقيتك — ذلك يأتي من طبيبك.',
   about_n3:'ليس للحالات الطارئة، وليس بديلاً عن التحدث مع فريقك.',
-  about_ver:'مساعد أطفال الأنابيب — بوابة المريض · نسخة تجريبية · حُدّثت ٢٢ يونيو ٢٠٢٦'
+  about_ver:'مساعد أطفال الأنابيب — بوابة المريض · نسخة تجريبية · حُدّثت ٢٢ يونيو ٢٠٢٦',
+  // patient id, injection log, clinic links, survey
+  patientid:'رقم المريضة · MFL-2026-0481',
+  log_title:'سجل الحُقن', log_btn:'سجّلي حقنة الآن',
+  log_note:'هذا السجل خاص بكِ على هذا الجهاز لمساعدتك على التذكّر. لا تُنبَّه عيادتك به — لأي أمر عاجل، اتصلي بالعيادة.',
+  clinic_reach:'العيادة والتواصل', cl_web:'الموقع الإلكتروني', cl_email:'البريد الإلكتروني', cl_ig:'إنستغرام', cl_fb:'فيسبوك', cl_call:'اتصلي بالعيادة',
+  cl_note:'بيانات تواصل تجريبية — استبدليها بموقع عيادتك وبريدها وروابطها الفعلية.',
+  survey_label:'رأيك يهمّنا', survey_t:'كيف تجدين التطبيق؟', survey_m:'رأي سريع ومجهول يساعدنا على التحسين',
+  // clinic branding
+  more_clinic_t:'عن عيادتك', more_clinic_d:'الرسالة والرؤية والتواصل',
+  clinic_name:'ميديتيرا للخصوبة', clinic_motto:'نرعى رحلتك نحو الأبوّة والأمومة.',
+  clinic_mission_l:'رسالتنا', clinic_mission_d:'تقديم رعاية خصوبة عالمية المستوى بكل تعاطف — نجمع بين التميّز العلمي والدعم الإنساني الصادق، كي يشعر كل مريض بأنه مطّلع ومحترَم ومُعتنى به.',
+  clinic_vision_l:'رؤيتنا', clinic_vision_d:'مستقبل يحصل فيه كل من يحلم بأسرة على رعاية خصوبة آمنة وأخلاقية وفعّالة.',
+  clinic_contact_btn:'تواصل العيادة والفريق', clinic_edit_note:'نص تجريبي — استبدليه بشعار عيادتك ورسالتها ورؤيتها الفعلية.'
 };
 
 // boot
 captureEnglish();
+renderInjLog();
 </script>
 </body>
 </html>
