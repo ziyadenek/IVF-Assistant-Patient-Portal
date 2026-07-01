@@ -515,17 +515,21 @@
   <div class="screen" id="s-appts">
     <h2 data-i18n="appts_title">Appointments</h2>
     <p class="lede" data-i18n="appts_lede">Your upcoming and past visits.</p>
+    <button class="btn" onclick="openAppt('new')" data-i18n="appt_new_btn">Request an appointment</button>
     <div class="section-label" data-i18n="appts_up">Coming up</div>
     <div class="card"><div class="card-row">
       <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
       <div style="flex:1"><h3 data-i18n="appts_1t">Monitoring scan &amp; bloods</h3><div class="meta" data-i18n="appts_1m">Sat 21 Jun · 8:30 AM · Dr. Aydın</div><span class="tag next" data-i18n="tag_next">Next</span></div>
     </div>
       <button class="btn ghost" style="margin-top:10px" onclick="toast('cal_add')" data-i18n="add_cal">Add to calendar</button>
+      <button class="btn ghost" style="margin-top:8px" onclick="openAppt('resc','Monitoring scan &amp; bloods · Sat 21 Jun')" data-i18n="appt_resc_btn">Request to reschedule</button>
     </div>
     <div class="card"><div class="card-row">
       <div class="ic teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
       <div><h3 data-i18n="appts_2t">Follow-up scan</h3><div class="meta" data-i18n="appts_2m">Mon 23 Jun · 9:00 AM · Dr. Aydın</div></div>
-    </div></div>
+    </div>
+      <button class="btn ghost" style="margin-top:10px" onclick="openAppt('resc','Follow-up scan · Mon 23 Jun')" data-i18n="appt_resc_btn">Request to reschedule</button>
+    </div>
     <div class="section-label" data-i18n="appts_past">Past</div>
     <div class="card flat"><div class="card-row">
       <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
@@ -535,7 +539,7 @@
       <div class="ic grey"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div><h3 data-i18n="appts_4t">Treatment consultation</h3><div class="meta" data-i18n="appts_4m">Tue 7 Jun · 2:00 PM</div><span class="tag done" data-i18n="tag_done2">Completed</span></div>
     </div></div>
-    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="appts_note">Need to change a time? Send your coordinator a callback request under Messages and they'll help you reschedule.</span></div>
+    <div class="notice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="appts_note">Requests are confirmed by your clinic — appointment timing is set with your treatment in mind, so your team picks the final slot. Not for emergencies.</span></div>
   </div>
 
   <!-- RESULTS -->
@@ -1265,6 +1269,42 @@ function sendChat(){
   }, 900);
 }
 
+// ── appointment request / reschedule (demo — request only, clinic confirms) ──
+var APPT = {
+  en:{ new_title:'Request an appointment', resc_title:'Request to reschedule',
+       intro_new:'Tell us what you need and when suits you. Your coordinator confirms the actual time — appointment timing is set with your care in mind.',
+       intro_resc:'Ask to move this visit. Your coordinator will confirm a new time that fits your treatment.',
+       q_which:'Appointment to move', q_reason:'What do you need?',
+       reasons:['A monitoring scan or visit','A consultation','A question in person','Something else'],
+       q_pref:'Preferred days', prefs:['As soon as possible','Weekday mornings','Weekday afternoons','A specific date (add a note)'],
+       q_time:'Preferred time', times:['Morning (8am–12pm)','Afternoon (12–4pm)','Late afternoon (4–6pm)'],
+       q_note:'Anything else? (optional)', ph:'A short note…', send:'Send request',
+       note:'This is a request — your clinic confirms the final time. Not for emergencies.' },
+  ar:{ new_title:'طلب موعد', resc_title:'طلب تغيير الموعد',
+       intro_new:'أخبرينا بما تحتاجينه والوقت المناسب لك. يؤكّد منسّقك الوقت الفعلي — يُحدَّد توقيت المواعيد بما يراعي رعايتك.',
+       intro_resc:'اطلبي تغيير هذه الزيارة. سيؤكّد منسّقك وقتاً جديداً يناسب علاجك.',
+       q_which:'الموعد المراد تغييره', q_reason:'ما الذي تحتاجينه؟',
+       reasons:['فحص متابعة أو زيارة','استشارة','سؤال حضورياً','شيء آخر'],
+       q_pref:'الأيام المفضّلة', prefs:['في أقرب وقت','صباح أيام العمل','بعد ظهر أيام العمل','تاريخ محدد (أضيفي ملاحظة)'],
+       q_time:'الوقت المفضّل', times:['صباحاً (٨–١٢)','ظهراً (١٢–٤)','عصراً (٤–٦)'],
+       q_note:'أي شيء آخر؟ (اختياري)', ph:'ملاحظة قصيرة…', send:'إرسال الطلب',
+       note:'هذا طلب — تؤكّد عيادتك الوقت النهائي. ليست للحالات الطارئة.' }
+};
+function openAppt(mode, label){
+  var a = APPT[LANG] || APPT.en; var isR = mode === 'resc';
+  var html = '<h3>'+(isR?a.resc_title:a.new_title)+'</h3><div class="body-txt">'+(isR?a.intro_resc:a.intro_new)+'</div>';
+  if(isR && label){ html += '<div class="field"><label>'+a.q_which+'</label><input type="text" value="'+label+'" readonly></div>'; }
+  else { html += '<div class="field"><label>'+a.q_reason+'</label><select>'+a.reasons.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'; }
+  html += '<div class="field"><label>'+a.q_pref+'</label><select>'+a.prefs.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'
+    + '<div class="field"><label>'+a.q_time+'</label><select>'+a.times.map(function(x){return '<option>'+x+'</option>'}).join('')+'</select></div>'
+    + '<div class="field"><label>'+a.q_note+'</label><textarea rows="2" placeholder="'+a.ph+'"></textarea></div>'
+    + '<button class="btn" onclick="sendAppt()">'+a.send+'</button>'
+    + '<p class="login-note" style="text-align:center">'+a.note+'</p>';
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('sheet-bg').classList.add('open');
+}
+function sendAppt(){ closeSheet(); toast('appt_sent'); }
+
 /* ════════════ i18n ENGINE ════════════
    Captures the English (the inline HTML) on first load, stores Arabic in AR.
    Toggling restores captured English or applies Arabic — missing keys stay English. */
@@ -1318,8 +1358,8 @@ var TOG = {
   ar:{ rem_appt:'تذكيرات المواعيد', rem_inj:'تذكيرات الحُقن' }
 };
 var TOAST = {
-  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)', log_done:'Injection logged (demo)', survey_thanks:'Thank you — your feedback helps (demo)', exp_thanks:'Thank you — your feedback helps us improve (demo)', concern_sent:'Concern submitted — the team will acknowledge it (demo)' },
-  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)', log_done:'سُجّلت الحقنة (نسخة تجريبية)', survey_thanks:'شكراً لكِ — رأيك يساعدنا (نسخة تجريبية)', exp_thanks:'شكراً لكِ — رأيك يساعدنا على التحسين (نسخة تجريبية)', concern_sent:'وصلتنا ملاحظتك — سيتواصل الفريق معك (نسخة تجريبية)' }
+  en:{ cal_add:'Added to your calendar (demo)', cal_plan:'Plan added to your calendar (demo)', cb_sent:'Callback request sent — we’ll be in touch (demo)', task_logged:'Done — your care team can see this (demo)', today_done:'🌿 All done for today — nicely done!', copy_sent:'Copy requested — we’ll email it to you (demo)', log_done:'Injection logged (demo)', survey_thanks:'Thank you — your feedback helps (demo)', exp_thanks:'Thank you — your feedback helps us improve (demo)', concern_sent:'Concern submitted — the team will acknowledge it (demo)', appt_sent:'Request sent — your clinic will confirm the time (demo)' },
+  ar:{ cal_add:'أُضيف إلى تقويمك (نسخة تجريبية)', cal_plan:'أُضيفت الخطة إلى تقويمك (نسخة تجريبية)', cb_sent:'أُرسل طلب المعاودة — سنتواصل معك (نسخة تجريبية)', task_logged:'تم — يطّلع فريق رعايتك على هذا (نسخة تجريبية)', today_done:'🌿 أنجزتِ مهام اليوم — أحسنتِ!', copy_sent:'طُلبت نسخة — سنرسلها إلى بريدك (نسخة تجريبية)', log_done:'سُجّلت الحقنة (نسخة تجريبية)', survey_thanks:'شكراً لكِ — رأيك يساعدنا (نسخة تجريبية)', exp_thanks:'شكراً لكِ — رأيك يساعدنا على التحسين (نسخة تجريبية)', concern_sent:'وصلتنا ملاحظتك — سيتواصل الفريق معك (نسخة تجريبية)', appt_sent:'أُرسل الطلب — ستؤكّد عيادتك الوقت (نسخة تجريبية)' }
 };
 var CB = {
   en:{ title:'Request a callback', intro:'Tell us what it’s about and when suits you. Your coordinator aims to call back within one working day.',
@@ -1476,7 +1516,7 @@ var AR = {
   // appointments
   appts_title:'المواعيد', appts_lede:'زياراتك القادمة والسابقة.',
   appts_up:'قادمة', appts_1t:'فحص متابعة وتحاليل دم', appts_1m:'السبت ٢١ يونيو · ٨:٣٠ صباحاً · د. أيدن', tag_next:'التالي',
-  add_cal:'إضافة إلى التقويم',
+  add_cal:'إضافة إلى التقويم', appt_new_btn:'طلب موعد', appt_resc_btn:'طلب تغيير الموعد',
   appts_2t:'فحص متابعة', appts_2m:'الإثنين ٢٣ يونيو · ٩:٠٠ صباحاً · د. أيدن',
   appts_past:'سابقة', appts_3t:'الفحص الأساسي', appts_3m:'الإثنين ١٣ يونيو · ٨:٣٠ صباحاً', tag_done:'مكتمل',
   appts_4t:'استشارة العلاج', appts_4m:'الثلاثاء ٧ يونيو · ٢:٠٠ مساءً', tag_done2:'مكتمل',
